@@ -2,8 +2,6 @@
 [NOTE] :
 - Skrip ini bisa digunakan
 - Skrip ini sukses untuk login ke beberapa device mikrotik, ekspor file log, kemudian download ke laptop
-[WARN] : Namun dikarenakan algoritma regexp mencari filenya, skrip ini mendownload file yang mirip dengan nama file yang baru digenerate
-[NEXT] : Solusinya untuk download file yang akurat, bisa menggunakan fitur "tool fetch mikrotik"
 """
 
 
