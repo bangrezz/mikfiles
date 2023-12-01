@@ -1,10 +1,3 @@
-"""
-[NOTE] :
-- Skrip ini bisa digunakan
-- Skrip ini sukses untuk login ke beberapa device mikrotik, ekspor file log, kemudian download ke laptop
-"""
-
-
 import paramiko
 import ipaddress
 import socket
