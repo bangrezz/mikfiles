@@ -59,6 +59,9 @@ def login_mikrotik(ip, username, password):
                 # Mendownload file
                 sftp.get('/' + file, local_file)
 
+                # deleteBackupFile on MikroTik
+                sftp.remove('/' + file)
+
         # Menutup koneksi
         sftp.close()
 
