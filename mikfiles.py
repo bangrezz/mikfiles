@@ -26,11 +26,6 @@ def selectionFile():
             print("error")
             os.system('exit')
     elif selection_file == "2": # export file config and backup
-        """
-         # Untuk ekspor file config, harus membuat regexp baru lagi, 
-         # kemudian harus memisahkan file hostname log dengan hostname file config
-        atau bisa dengan membuatkan function didalam file hostname.py untuk ekspor log atau file config
-        """
         print("Export file configuration and backup file")
         from modules import hostnameFileConf
         from modules import ipAddressFileConf
