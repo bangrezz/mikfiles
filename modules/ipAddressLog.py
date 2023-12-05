@@ -22,7 +22,7 @@ def login_mikrotik(ip, username, password):
         date_time = now.strftime("%Y%m%d-%H%M%S")
 
         # Define the log filename
-        log_filename = f"{ip}-{date_time}.log"
+        log_filename = f"{ip}-{date_time}"
 
         # Export the log file
         command = f"/log print file={log_filename}"
@@ -36,7 +36,10 @@ def login_mikrotik(ip, username, password):
         sftp = ssh.open_sftp()
 
         # Pola regexp untuk mencocokkan nama file
-        pattern = rf"\b{ip}-\d{{8}}-\d{{6}}\.log\.txt\b"
+        # Untuk format date ini ada perbedaan sedikit dengan format hostnameLog.py
+        # [NEXT] harus diubah agar format name sama seperti hostnameLog.py 
+        # dan bisa didownload & dihapus pada MikroTik
+        pattern = rf"\b{ip}-\d{{8}}-\d{{6}}\.txt\b"
 
         # Mendapatkan daftar semua file di direktori root
         files = sftp.listdir('/')
@@ -68,19 +71,14 @@ def login_mikrotik(ip, username, password):
         ssh.close()
 
 def main():
-    username = 'admin'
-    password = ''
-    ip_range_input = input("""
-        [*] Masukkan range IP dengan format dibawah
-             |
-             v
-        192.168.1.0/24
-            atau
-        192.168.1.1-192.168.1.100 (tanpa spasi diantara '-')
-
-
-        : """)
-
+    os.system('clear')
+    from ui import inputPrep
+    inputPrep.ipAddrDefSelection()
+    inputPrep.ExportFileDef.ipAddrLogDef()
+    inputPrep.inputPrep()
+    ip_range_input = input("IP Address : ")
+    username = str(input("Input Username : "))
+    password = str(input("Input Password : "))
     if '-' in ip_range_input:
         start_ip, end_ip = ip_range_input.split('-')
         start_ip = ipaddress.IPv4Address(start_ip)

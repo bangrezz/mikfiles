@@ -29,6 +29,7 @@ def login_mikrotik(ip, username, password):
 
         # Export the log file
         command = f"/log print file={log_filename}"
+        #command = f"/system backup save name={log_filename}; /export file={log_filename}"
         stdin, stdout, stderr = ssh.exec_command(command)
         print(f"[*] Eksekusi perintah '{command}' di {ip}:")
         print(stdout.read().decode())
@@ -72,19 +73,14 @@ def login_mikrotik(ip, username, password):
         ssh.close()
 
 def main():
-    username = 'admin'
-    password = ''
-    ip_range_input = input("""
-        [*] Masukkan range IP dengan format dibawah
-             |
-             v
-        192.168.1.0/24
-            atau
-        192.168.1.1-192.168.1.100 (tanpa spasi diantara '-')
-
-
-        : """)
-
+    os.system('clear')
+    from ui import inputPrep
+    inputPrep.hostnameDefSelection()
+    inputPrep.ExportFileDef.hostnameLogDef()
+    inputPrep.inputPrep()
+    ip_range_input = input("IP Address : ")
+    username = str(input("Input Username : "))
+    password = str(input("Input Password : "))
     if '-' in ip_range_input:
         start_ip, end_ip = ip_range_input.split('-')
         start_ip = ipaddress.IPv4Address(start_ip)
@@ -97,6 +93,3 @@ def main():
         ip_range = ipaddress.ip_network(ip_range_input)
         for ip in ip_range.hosts():
             login_mikrotik(str(ip), username, password)
-
-if __name__ == "__main__":
-    main()
