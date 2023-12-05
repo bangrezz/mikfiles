@@ -1,6 +1,6 @@
 def selectFormat():
       print("""
-Welcome to the "name of project". The script will generate export or log file of MikroTik
+Welcome to the mikfiles. The script will generate export or log file of MikroTik
 Select the format hostname :
             
             
