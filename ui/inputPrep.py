@@ -10,6 +10,10 @@ class ExportFileDef:
         print("[->] Export File Configuration and Backup file with Hostname format")
     def ipAddrFileConfDef():
         print("[->] Export File Configuration and Backup file with IP Address format")
+    def hostnameExportBoth():
+        print("[->] Export Log, Config, Backup Configuration Files with hostname format")
+    def ipAddrExportBoth():
+        print("[->] Export Log, Config, Backup Configuration Files with hostname format")
 
 def hostnameDefSelection():
     cls

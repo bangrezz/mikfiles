@@ -13,5 +13,4 @@ Select to Export file
 
 (q) Exit the program
 
-Meaning the format name is = hostname or ip address_date_clock
 """)
