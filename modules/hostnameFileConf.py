@@ -29,6 +29,7 @@ def login_mikrotik(ip, username, password):
 
         # Export the file conf and backup file
         command = f"/system backup save name={log_filename}; /export file={log_filename}"
+        #command = f"/export file={log_filename}"
         stdin, stdout, stderr = ssh.exec_command(command)
         print(f"[*] Eksekusi perintah '{command}' di {ip}:")
         print(stdout.read().decode())
@@ -40,7 +41,7 @@ def login_mikrotik(ip, username, password):
 
         # Pola regexp untuk mencocokkan nama file
         # \S+ cocok dengan satu atau lebih karakter non-whitespace
-        pattern = r"\b\S+_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.txt\b"
+        pattern = r"\b\S+_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.(rsc|backup)\b"
 
         # Mendapatkan daftar semua file di direktori root
         files = sftp.listdir('/')

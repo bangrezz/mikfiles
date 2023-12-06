@@ -22,7 +22,7 @@ def login_mikrotik(ip, username, password):
         date_time = now.strftime("%Y%m%d-%H%M%S")
 
         # Define the log filename
-        log_filename = f"{ip}-{date_time}.log"
+        log_filename = f"{ip}-{date_time}"
 
         # Export the file conf and backup file
         command = f"/system backup save name={log_filename}; /export file={log_filename}"
@@ -36,7 +36,7 @@ def login_mikrotik(ip, username, password):
         sftp = ssh.open_sftp()
 
         # Pola regexp untuk mencocokkan nama file
-        pattern = rf"\b{ip}-\d{{8}}-\d{{6}}\.log\.txt\b"
+        pattern = rf"\b{ip}-\d{{8}}-\d{{6}}\.(rsc|backup)\b"
 
         # Mendapatkan daftar semua file di direktori root
         files = sftp.listdir('/')
