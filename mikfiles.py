@@ -14,7 +14,7 @@ def selectionFile():
         print("unknown")
     from ui import selectFileExport
     selectFileExport.selectFile()
-    selection_file = str(input("Select 1/2/3/b/e : "))
+    selection_file = str(input("Select 1/2/3/b/q : "))
     if selection_file == "1": # export log file
         from modules import hostnameLog
         from modules import ipAddressLog
@@ -31,16 +31,22 @@ def selectionFile():
         from modules import ipAddressFileConf
         if selection_format == "1": # [DONE] Execute hostname modules if selection format 1
             hostnameFileConf.main()
-        elif selection_format == "2": # [DONE] Execute hostname modules if selection format 1
+        elif selection_format == "2": # [DONE] Execute IP Address modules if selection format 1
             ipAddressFileConf.main()
         else:
             print("error")
             os.system('exit')
-    elif selection_file == "3":
-        print("Export both coming soon")
-        print("Back to the previous. Wait 3s...")
-        time.sleep(3)
-        main()
+    elif selection_file == "3": # Export both
+        print("Export both")
+        from modules import HostnameExBoth
+        from modules import ipAddressExBoth
+        if selection_format == "1": # [DONE] Execute hostname modules if selection format 1
+            HostnameExBoth.main()
+        elif selection_format == "2": # [DONE] Execute IP Address modules if selection format 1
+            ipAddressExBoth.main()
+        else:
+            print("error")
+            os.system('exit')
     elif selection_file == "b":
         print("Back to the previous")
         main()
