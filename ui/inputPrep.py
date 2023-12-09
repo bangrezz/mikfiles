@@ -24,13 +24,12 @@ def ipAddrDefSelection():
 
 def inputPrep():
     print("""
-        [*] Input range IP Address with format in below
+[*] Input range IP Address with format in below
              
         192.168.1.1 [single IP Address]
             or
         192.168.1.0/24
             or
         192.168.1.1-192.168.1.100 (no space between '-')
-
 
         """)
