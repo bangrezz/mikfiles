@@ -16,7 +16,8 @@ def selectionFile():
     selectFileExport.selectFile()
     def selectFilesNum():
         try:
-            selection_file = str(input("Select 1/2/3/b/q : "))
+            selection_file = str(input("""Select 1/2/3/4/b/q 
+: """))
             if selection_file == "1": # export log file
                 from modules import hostnameLog
                 from modules import ipAddressLog
@@ -49,6 +50,10 @@ def selectionFile():
                 else:
                     print("error")
                     os.system('exit')
+            elif selection_file == "4":
+                print("Automatic download with cron")
+                print("Coming soon. Wait 3s...")
+                time.sleep(3);main()
             elif selection_file == "b":
                 print("Back to the previous")
                 main()
