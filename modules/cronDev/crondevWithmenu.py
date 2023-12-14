@@ -88,9 +88,42 @@ def tambahkan_cron():
         print(f"Terjadi kesalahan: {e}")
 
 # Fungsi untuk mengedit baris konfigurasi cron
+"""
+[NOTE] Bug disini. Ternyata Pada saat saya memilih edit. kemudian saya 
+diarahkan untuk memasukkan nomor skrip yang ingin diedit, dan saya 
+memilih nomor 5. Namun ternyata skrip menulis konfigurasi cron pada 
+baris ke 5, bukan nomor 5 yang saya inginkan yaitu 
+= Konfigurasi Cron Asli 5: 15 7 * * * admin python3 /path/2/script.py
+"""
 def edit_cron():
-    # Implementasi fungsi ini tergantung pada kebutuhan spesifik Anda
-    pass
+    # Menerima input dari pengguna
+    nomor_konfigurasi = int(input("Masukkan nomor konfigurasi cron yang ingin Anda edit: "))
+
+    # Membaca file crontab dan menyimpan barisnya
+    with open('/etc/crontab', 'r') as file:
+        baris = file.readlines()
+
+    # Mengambil konfigurasi cron lama
+    parts = baris[nomor_konfigurasi - 1].split()
+    menit_lama, jam_lama, hari_dari_bulan_lama, bulan_lama, hari_dari_minggu_lama, *perintah_lama = parts
+    perintah_lama = ' '.join(perintah_lama)
+
+    # Menerima input baru dari pengguna, atau menggunakan nilai lama jika pengguna hanya menekan enter
+    menit = input(f"Masukkan menit baru (0-59 atau *, tekan enter untuk tidak mengubah): ") or menit_lama
+    jam = input(f"Masukkan jam baru (0-23 atau *, tekan enter untuk tidak mengubah): ") or jam_lama
+    hari_dari_bulan = input(f"Masukkan hari dari bulan baru (1-31 atau *, tekan enter untuk tidak mengubah): ") or hari_dari_bulan_lama
+    bulan = input(f"Masukkan bulan baru (1-12 atau *, tekan enter untuk tidak mengubah): ") or bulan_lama
+    hari_dari_minggu = input(f"Masukkan hari dari minggu baru (0-7 dimana 0 dan 7 adalah Minggu, atau *, tekan enter untuk tidak mengubah): ") or hari_dari_minggu_lama
+    perintah = input(f"Masukkan perintah baru yang ingin dijalankan (tekan enter untuk tidak mengubah): ") or perintah_lama
+
+    # Mengubah baris konfigurasi cron yang dipilih
+    baris[nomor_konfigurasi - 1] = f"{menit} {jam} {hari_dari_bulan} {bulan} {hari_dari_minggu} {perintah}\n"
+
+    # Menulis kembali baris ke file crontab
+    with open('/etc/crontab', 'w') as file:
+        file.writelines(baris)
+
+    print("Konfigurasi cron berhasil diedit.")
 
 # Fungsi untuk menghapus baris konfigurasi cron
 def hapus_cron():
