@@ -75,28 +75,7 @@ def tambahkan_cron():
         print(f"\033[32m" + "[*]" + "\033[0m" + " Konfigurasi cron berhasil ditambahkan.")
     except Exception as e:
         print(f"Terjadi kesalahan: {e}")
-"""
-#fungsi untuk edit baris konfigurasi cron
-def edit_cron(konfigurasi_cron):
-    nomor_konfigurasi = int(input("Masukkan nomor konfigurasi cron yang ingin Anda edit: "))
-    if 1 <= nomor_konfigurasi <= len(konfigurasi_cron):
-        parts = konfigurasi_cron[nomor_konfigurasi - 1].split()
-        menit_lama, jam_lama, hari_dari_bulan_lama, bulan_lama, hari_dari_minggu_lama, *perintah_lama = parts
-        perintah_lama = ' '.join(perintah_lama)
-        menit = input(f"Masukkan menit baru (0-59 atau *, tekan enter untuk tidak mengubah): ") or menit_lama
-        jam = input(f"Masukkan jam baru (0-23 atau *, tekan enter untuk tidak mengubah): ") or jam_lama
-        hari_dari_bulan = input(f"Masukkan hari dari bulan baru (1-31 atau *, tekan enter untuk tidak mengubah): ") or hari_dari_bulan_lama
-        bulan = input(f"Masukkan bulan baru (1-12 atau *, tekan enter untuk tidak mengubah): ") or bulan_lama
-        hari_dari_minggu = input(f"Masukkan hari dari minggu baru (0-7 dimana 0 dan 7 adalah Minggu, atau *, tekan enter untuk tidak mengubah): ") or hari_dari_minggu_lama
-        perintah = input(f"Masukkan perintah baru yang ingin dijalankan (tekan enter untuk tidak mengubah): ") or perintah_lama
-        konfigurasi_cron[nomor_konfigurasi - 1] = f"{menit} {jam} {hari_dari_bulan} {bulan} {hari_dari_minggu} {perintah}"
-        with open('/etc/crontab', 'w') as file:
-            for konfigurasi in konfigurasi_cron:
-                file.write(f"{konfigurasi}\n")
-        print(f"\033[32m" + "[*]" + "\033[0m" + " Konfigurasi cron berhasil diedit.")
-    else:
-        print(f"\033[31m" + "[!]" + "\033[0m" + " Nomor konfigurasi cron tidak valid.")
-"""
+
 #fungsi untuk edit baris konfigurasi cron
 def edit_cron(konfigurasi_cron):
     nomor_konfigurasi = int(input("Masukkan nomor konfigurasi cron yang ingin Anda edit: "))
