@@ -37,12 +37,13 @@ def cek_sistem_dan_file():
 def jelaskan_cron():
     konfigurasi_cron = []  # Daftar untuk menyimpan baris konfigurasi cron
     komentar_dan_non_cron = []  # Daftar untuk menyimpan komentar dan baris non-cron
-    cron_pattern = re.compile(r'^\s*(\d+|\*)\s+(\d+|\*)\s+(\d+|\*)\s+(\d+|\*)\s+(\d+|\*)\s+.*$')
     try:
         with open('/etc/crontab', 'r') as file:
             for line in file:
-                if cron_pattern.match(line):
-                    konfigurasi_cron.append(line.strip())  # Menambahkan baris konfigurasi cron ke daftar
+                if not line.strip().startswith('#') and line.strip():
+                    konfigurasi_cron.append((line.strip(), "active"))  # Menambahkan baris konfigurasi cron ke daftar
+                elif line.strip().startswith('#') and len(line.strip().split()) > 1:
+                    konfigurasi_cron.append((line.strip(), "inactive"))
                 else:
                     komentar_dan_non_cron.append(line.strip())
     except Exception as e:
@@ -56,13 +57,14 @@ def baca_crontab():
     try:
         with open('/etc/crontab', 'r') as file:
             for line in file:
-                if cron_pattern.match(line):
+                if (cron_pattern.match(line) and not line.strip() == "* * * * *") or (line.strip().startswith('# ') and cron_pattern.match(line.strip()[2:]) and not line.strip()[2:] == "* * * * *" and not line.strip() == "# * * * * * user-name command to be executed"):
                     konfigurasi_cron.append(line.strip())  # Menambahkan baris konfigurasi cron ke daftar
                 else:
                     komentar_dan_non_cron.append(line.strip())
     except Exception as e:
         print(f"Terjadi kesalahan: {e}")
     return konfigurasi_cron, komentar_dan_non_cron
+
 
 def tulis_crontab(konfigurasi_cron, komentar_dan_non_cron):
     try:
@@ -78,8 +80,8 @@ def tulis_crontab(konfigurasi_cron, komentar_dan_non_cron):
 # Fungsi untuk menampilkan menu dan memproses pilihan pengguna
 def tampilkan_menu():
     print("\nMenu:")
-    print("1. Add   2. Edit    3. Delete   4. Disable")
-    pilihan = input("Masukkan pilihan Anda (1-4): ")
+    print("1. Add   2. Edit    3. Delete   4. Disable   5. Enable")
+    pilihan = input("Masukkan pilihan Anda (1-5): ")
     return pilihan
 
 # Fungsi untuk menambahkan baris konfigurasi cron
@@ -129,9 +131,24 @@ def edit_cron(konfigurasi_cron):
         print(f"\033[31m" + "[!]" + "\033[0m" + " Nomor konfigurasi cron tidak valid.")
 
 # Fungsi untuk menghapus baris konfigurasi cron
-def hapus_cron():
-    # Implementasi fungsi ini tergantung pada kebutuhan spesifik Anda
-    pass
+def hapus_cron(konfigurasi_cron):
+    nomor_konfigurasi = int(input("Masukkan nomor konfigurasi cron yang ingin Anda hapus: "))
+    if 1 <= nomor_konfigurasi <= len(konfigurasi_cron):
+        del konfigurasi_cron[nomor_konfigurasi - 1]
+        print(f"\033[32m" + "[*]" + "\033[0m" + " Konfigurasi cron berhasil dihapus.")
+    else:
+        print(f"\033[31m" + "[!]" + "\033[0m" + " Nomor konfigurasi cron tidak valid.")
+
+def aktifkan_cron(konfigurasi_cron):
+    nomor_konfigurasi = int(input("Masukkan nomor konfigurasi cron yang ingin Anda aktifkan: "))
+    if 1 <= nomor_konfigurasi <= len(konfigurasi_cron):
+        if konfigurasi_cron[nomor_konfigurasi - 1].startswith('# '):
+            konfigurasi_cron[nomor_konfigurasi - 1] = konfigurasi_cron[nomor_konfigurasi - 1][2:]
+            print(f"\033[32m" + "[*]" + "\033[0m" + " Konfigurasi cron berhasil diaktifkan.")
+        else:
+            print(f"\033[31m" + "[!]" + "\033[0m" + " Konfigurasi cron sudah aktif.")
+    else:
+        print(f"\033[31m" + "[!]" + "\033[0m" + " Nomor konfigurasi cron tidak valid.")
 
 # Fungsi untuk menonaktifkan baris konfigurasi cron
 def nonaktifkan_cron(konfigurasi_cron):
@@ -145,7 +162,7 @@ def nonaktifkan_cron(konfigurasi_cron):
     else:
         print(f"\033[31m" + "[!]" + "\033[0m" + " Nomor konfigurasi cron tidak valid.")
 
-def jelaskan_konfigurasi_cron(konfigurasi):
+def jelaskan_konfigurasi_cron(konfigurasi, status):
     bagian = konfigurasi.split()
     if len(bagian) >= 6:
         menit, jam, hari_dari_bulan, bulan, hari_dari_minggu, *perintah = bagian
@@ -158,6 +175,7 @@ def jelaskan_konfigurasi_cron(konfigurasi):
         if bulan == '*': bulan = '-'
         if hari_dari_minggu == '*': hari_dari_minggu = '-'
         
+        print(f"[*] Status = {status}")
         print(f"[*] Time = Menit: {menit}, Jam: {jam}, Hari dari bulan: {hari_dari_bulan}, Bulan: {bulan}, Hari dari minggu: {hari_dari_minggu}")
         print(f"[*] Commands = {perintah}")
     else:
@@ -167,7 +185,9 @@ def main():
     konfigurasi_cron, komentar_dan_non_cron = baca_crontab()
     for i, konfigurasi in enumerate(konfigurasi_cron, start=1):
         print(f"\033[34m" + f"[{i}]" + "\033[0m" + f" Konfigurasi Cron Asli : {konfigurasi}")
-        jelaskan_konfigurasi_cron(konfigurasi)
+        # Menentukan status berdasarkan apakah konfigurasi dimulai dengan '# '
+        status = 'inactive' if konfigurasi.startswith('# ') else 'active'
+        jelaskan_konfigurasi_cron(konfigurasi, status)
     pilihan = tampilkan_menu()
     print(f"Pilihan Anda: {pilihan}")  # Tambahkan baris ini
     if pilihan == '1':
@@ -181,6 +201,9 @@ def main():
         tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
     elif pilihan == '4':
         nonaktifkan_cron(konfigurasi_cron)
+        tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
+    elif pilihan == '5':
+        aktifkan_cron(konfigurasi_cron)
         tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
     else:
         print(f"\033[31m" + "[!]" + "\033[0m" + " Pilihan tidak valid. Silakan coba lagi.")
