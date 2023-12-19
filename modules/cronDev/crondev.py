@@ -54,17 +54,19 @@ def baca_crontab():
     konfigurasi_cron = []  # Daftar untuk menyimpan baris konfigurasi cron
     komentar_dan_non_cron = []  # Daftar untuk menyimpan komentar dan baris non-cron
     cron_pattern = re.compile(r'^\s*(\d+|\*)\s+(\d+|\*)\s+(\d+|\*)\s+(\d+|\*)\s+(\d+|\*)\s+.*$')
+    format_cron_pattern = re.compile(r'^#\s*\*\s*\*\s*\*\s*\*\s*\*\s*user-name command to be executed$')
     try:
         with open('/etc/crontab', 'r') as file:
             for line in file:
-                if (cron_pattern.match(line) and not line.strip() == "* * * * *") or (line.strip().startswith('# ') and cron_pattern.match(line.strip()[2:]) and not line.strip()[2:] == "* * * * *" and not line.strip() == "# * * * * * user-name command to be executed"):
+                if format_cron_pattern.match(line):
+                    komentar_dan_non_cron.append(line.strip())
+                elif (cron_pattern.match(line) and not line.strip() == "* * * * *") or (line.strip().startswith('# ') and cron_pattern.match(line.strip()[2:]) and not line.strip()[2:] == "* * * * *"):
                     konfigurasi_cron.append(line.strip())  # Menambahkan baris konfigurasi cron ke daftar
                 else:
                     komentar_dan_non_cron.append(line.strip())
     except Exception as e:
         print(f"Terjadi kesalahan: {e}")
     return konfigurasi_cron, komentar_dan_non_cron
-
 
 def tulis_crontab(konfigurasi_cron, komentar_dan_non_cron):
     try:
