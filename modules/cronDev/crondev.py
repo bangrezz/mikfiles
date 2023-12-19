@@ -87,13 +87,13 @@ def tampilkan_menu():
     return pilihan
 
 # Fungsi untuk menambahkan baris konfigurasi cron
-def tambahkan_cron():
+def tambahkan_cron(konfigurasi_cron):
     # Menerima input dari pengguna
-    menit = input("Masukkan menit (0-59 atau *): ")
-    jam = input("Masukkan jam (0-23 atau *): ")
-    hari_dari_bulan = input("Masukkan hari dari bulan (1-31 atau *): ")
-    bulan = input("Masukkan bulan (1-12 atau *): ")
-    hari_dari_minggu = input("Masukkan hari dari minggu (0-7 dimana 0 dan 7 adalah Minggu, atau *): ")
+    menit = input("Masukkan menit (0-59 atau *, tekan enter untuk *): ") or '*'
+    jam = input("Masukkan jam (0-23 atau *, tekan enter untuk *): ") or '*'
+    hari_dari_bulan = input("Masukkan hari dari bulan (1-31 atau *, tekan enter untuk *): ") or '*'
+    bulan = input("Masukkan bulan (1-12 atau *, tekan enter untuk *): ") or '*'
+    hari_dari_minggu = input("Masukkan hari dari minggu (0-7 dimana 0 dan 7 adalah Minggu, atau *, tekan enter untuk *): ") or '*'
     perintah = input("Masukkan perintah yang ingin dijalankan: ")
 
     # Membuat baris konfigurasi cron
@@ -102,6 +102,7 @@ def tambahkan_cron():
     try:
         with open('/etc/crontab', 'a') as file:
             file.write(cron_baru)
+        konfigurasi_cron.append(cron_baru.strip())
         print(f"\033[32m" + "[*]" + "\033[0m" + " Konfigurasi cron berhasil ditambahkan.")
     except Exception as e:
         print(f"Terjadi kesalahan: {e}")
@@ -191,15 +192,16 @@ def main():
         status = 'inactive' if konfigurasi.startswith('# ') else 'active'
         jelaskan_konfigurasi_cron(konfigurasi, status)
     pilihan = tampilkan_menu()
-    print(f"Pilihan Anda: {pilihan}")  # Tambahkan baris ini
+    print(f"Pilihan Anda: {pilihan}")
     if pilihan == '1':
-        tambahkan_cron()
+        tambahkan_cron(konfigurasi_cron)
         tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
+        konfigurasi_cron, komentar_dan_non_cron = baca_crontab()
     elif pilihan == '2':
         edit_cron(konfigurasi_cron)
         tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
     elif pilihan == '3':
-        hapus_cron()
+        hapus_cron(konfigurasi_cron)
         tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
     elif pilihan == '4':
         nonaktifkan_cron(konfigurasi_cron)
