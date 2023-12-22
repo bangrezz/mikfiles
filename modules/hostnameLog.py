@@ -71,11 +71,6 @@ def login_mikrotik(ip, username, password, port):
         ssh.close()
             
 def main():
-    os.system('clear')
-    from ui import inputPrep
-    inputPrep.hostnameDefSelection()
-    inputPrep.ExportFileDef.hostnameLogDef()
-    inputPrep.inputPrep()
     username = str(input("Input Username : "))
     password = str(input("Input Password : "))
     port = 22  # Default port value
