@@ -1,7 +1,9 @@
+# dev file
 import re
 import os
 import shutil
 import platform
+import ipaddress
 
 # Fungsi untuk memeriksa sistem operasi dan file crontab
 def cek_sistem_dan_file():
@@ -32,7 +34,75 @@ def cek_sistem_dan_file():
         print("File crontab baru telah dibuat.")
 
     return True
+"""
+class SSHInput:
+    def __init__(self):
+        self.username = ""
+        self.password = ""
+        self.port = 22  # Default port value
 
+    def input_username_password(self):
+        self.username = str(input("Input Username : "))
+        self.password = str(input("Input Password : "))
+
+    def input_port(self):
+        port_input = input("Masukkan port SSH [Press Enter if default (port 22)] : ")
+        if port_input:
+            try:
+                self.port = int(port_input)
+            except ValueError:
+                print("\n [!] Port harus berupa angka.")
+                self.input_port()
+
+    def input_address(self):
+        ip_input = input("input IP Address : ")
+
+        # Memisahkan input berdasarkan koma dan menghapus spasi
+        ip_entries = [ip.strip() for ip in ip_input.split(',')]
+        for entry in ip_entries:
+            if '-' in entry:
+                start_ip, end_ip = entry.split('-')
+                start_ip = ipaddress.IPv4Address(start_ip)
+                end_ip = ipaddress.IPv4Address(end_ip)
+
+                for ip_int in range(int(start_ip), int(end_ip) + 1):
+                    global IP_Address
+                    IP_Address = ipaddress.IPv4Address(ip_int)
+            elif '/' in entry:
+                ip_range = ipaddress.ip_network(entry, strict=False)
+                for ip in ip_range.hosts():
+                    global IP_Address
+                    #
+            else:
+                try:
+                    ipaddress.IPv4Address(entry)  # Memvalidasi alamat IP
+                except ipaddress.AddressValueError as ave:
+                    print(f"Alamat IP tidak valid: {ave}")
+                    self.input_address()
+
+    def write_to_file(self, file_path):
+        try:
+            with open(file_path, 'r') as file:
+                file_data = file.read()
+
+            # Mengganti nilai variabel
+            file_data = re.sub(r'(?<=username = str\(input\("Input Username : "\)\) )[^"]*', self.username, file_data)
+            file_data = re.sub(r'(?<=password = str\(input\("Input Password : "\)\) )[^"]*', self.password, file_data)
+            file_data = re.sub(r'(?<=port = )\d*', str(self.port), file_data)
+            # Anda perlu menambahkan logika untuk menulis alamat IP
+
+            with open(file_path, 'w') as file:
+                file.write(file_data)
+
+            print(f"Berhasil menulis ke file {file_path}")
+        except Exception as e:
+            print(f"Gagal menulis ke file: {e}")
+
+    def input_prep(self):
+        self.input_username_password()
+        self.input_port()
+        self.input_address()
+"""
 # Fungsi untuk menganalisis dan menjelaskan baris konfigurasi cron
 def jelaskan_cron():
     konfigurasi_cron = []  # Daftar untuk menyimpan baris konfigurasi cron
@@ -185,6 +255,38 @@ def jelaskan_konfigurasi_cron(konfigurasi, status):
         print(f"\033[31m" + "[!]" + "\033[0m" + " Konfigurasi cron tidak valid.")
 
 def main():
+    # checking crontab file
+    cek_sistem_dan_file()
+
+    # Meminta input dari pengguna
+    username = input("Masukkan username: ")
+    password = input("Masukkan password: ")
+    ip_address = input("Masukkan IP address (format: single IP, range IP address yang dipisahkan oleh ',' atau '-', atau network address beserta subnet mask): ")
+    port = input("Masukkan port: ")
+
+    # Mengcopy file
+    shutil.copy2('../ipAddressLog.py', os.path.join(os.getcwd(), 'cronModules/ipAddressLog.py'))
+
+    # Membaca file yang baru dicopy
+    with open(os.path.join(os.getcwd(), 'cronModules/ipAddressLog.py'), 'r') as file:
+        lines = file.readlines()
+
+    # Menulis variabel ke file yang baru dicopy
+    for i, line in enumerate(lines):
+        if re.search(r'username = str\(input\("Input Username : "\)\)', line):
+            lines[i] = f'    username = "{username}"\n'
+        elif re.search(r'password = str\(input\("Input Password : "\)\)', line):
+            lines[i] = f'    password = "{password}"\n'
+        elif re.search(r'port_input = input\("Masukkan port SSH \[Press Enter if default \(port 22\)\] : "\)', line):
+            lines[i] = f'        port_input = "{port}"\n'
+        elif re.search(r'ip_input = input\("input IP Address : "\)', line):
+            lines[i] = f'        ip_input = "{ip_address}"\n'
+
+    # Menulis kembali ke file
+    with open(os.path.join(os.getcwd(), 'cronModules/ipAddressLog.py'), 'w') as file:
+        file.writelines(lines)
+    
+    # reading crontab file
     konfigurasi_cron, komentar_dan_non_cron = baca_crontab()
     for i, konfigurasi in enumerate(konfigurasi_cron, start=1):
         print(f"\033[34m" + f"[{i}]" + "\033[0m" + f" Konfigurasi Cron Asli : {konfigurasi}")
