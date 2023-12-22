@@ -12,7 +12,7 @@ class ExportFileDef:
     def hostnameExportBoth():
         print("[->] Export Log, Config, Backup Configuration Files with hostname format")
     def ipAddrExportBoth():
-        print("[->] Export Log, Config, Backup Configuration Files with hostname format")
+        print("[->] Export Log, Config, Backup Configuration Files with IP Address format")
 
 def hostnameDefSelection():
     os.system('clear')
