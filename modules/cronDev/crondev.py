@@ -273,7 +273,9 @@ def main():
 
     # Menulis variabel ke file yang baru dicopy
     for i, line in enumerate(lines):
-        if re.search(r'username = str\(input\("Input Username : "\)\)', line):
+        if re.search(r'local_file = os.path.join\(os.getcwd\(\), file\)', line):
+            lines[i] = "                local_file = os.path.join(os.getcwd(), 'fileExport', file)\n"
+        elif re.search(r'username = str\(input\("Input Username : "\)\)', line):
             lines[i] = f'    username = "{username}"\n'
         elif re.search(r'password = str\(input\("Input Password : "\)\)', line):
             lines[i] = f'    password = "{password}"\n'
@@ -281,6 +283,9 @@ def main():
             lines[i] = f'        port_input = "{port}"\n'
         elif re.search(r'ip_input = input\("input IP Address : "\)', line):
             lines[i] = f'        ip_input = "{ip_address}"\n'
+
+    # Menambahkan baris 'main()' di akhir file
+    lines.append('\nmain()\n')
 
     # Menulis kembali ke file
     with open(os.path.join(os.getcwd(), 'cronModules/ipAddressLog.py'), 'w') as file:
