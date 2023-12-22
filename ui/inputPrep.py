@@ -1,5 +1,4 @@
 import os
-cls = os.system('clear')
 
 class ExportFileDef:
     def hostnameLogDef():
@@ -16,10 +15,10 @@ class ExportFileDef:
         print("[->] Export Log, Config, Backup Configuration Files with hostname format")
 
 def hostnameDefSelection():
-    cls
+    os.system('clear')
     print("[->] Export with Hostname format")
 def ipAddrDefSelection():
-    cls
+    os.system('clear')
     print("[->] Export with IP address format")
 
 def inputPrep():
