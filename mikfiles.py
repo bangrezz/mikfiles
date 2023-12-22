@@ -22,8 +22,16 @@ def selectionFile():
                 from modules import hostnameLog
                 from modules import ipAddressLog
                 if selection_format == "1": # [DONE] Execute hostname modules if selection format 1
+                    from ui import inputPrep
+                    inputPrep.hostnameDefSelection()
+                    inputPrep.ExportFileDef.hostnameLogDef()
+                    inputPrep.inputPrep()
                     hostnameLog.main()
                 elif selection_format == "2": # [DONE] Execute ip address modules if selection format 2
+                    from ui import inputPrep
+                    inputPrep.ipAddrDefSelection()
+                    inputPrep.ExportFileDef.ipAddrLogDef()
+                    inputPrep.inputPrep()
                     ipAddressLog.main()
                 else:
                     print("error")
@@ -33,8 +41,16 @@ def selectionFile():
                 from modules import hostnameFileConf
                 from modules import ipAddressFileConf
                 if selection_format == "1": # [DONE] Execute hostname modules if selection format 1
+                    from ui import inputPrep
+                    inputPrep.hostnameDefSelection()
+                    inputPrep.ExportFileDef.hostnameFileConfDef()
+                    inputPrep.inputPrep()
                     hostnameFileConf.main()
                 elif selection_format == "2": # [DONE] Execute IP Address modules if selection format 1
+                    from ui import inputPrep
+                    inputPrep.ipAddrDefSelection()
+                    inputPrep.ExportFileDef.ipAddrFileConfDef()
+                    inputPrep.inputPrep()
                     ipAddressFileConf.main()
                 else:
                     print("error")
@@ -44,8 +60,16 @@ def selectionFile():
                 from modules import HostnameExBoth
                 from modules import ipAddressExBoth
                 if selection_format == "1": # [DONE] Execute hostname modules if selection format 1
+                    from ui import inputPrep
+                    inputPrep.hostnameDefSelection()
+                    inputPrep.ExportFileDef.hostnameExportBoth()
+                    inputPrep.inputPrep()
                     HostnameExBoth.main()
                 elif selection_format == "2": # [DONE] Execute IP Address modules if selection format 1
+                    from ui import inputPrep
+                    inputPrep.ipAddrDefSelection()
+                    inputPrep.ExportFileDef.ipAddrExportBoth()
+                    inputPrep.inputPrep()
                     ipAddressExBoth.main()
                 else:
                     print("error")
