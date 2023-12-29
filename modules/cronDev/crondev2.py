@@ -125,17 +125,13 @@ def edit_cron(konfigurasi_cron):
         if edit_file.lower() == 'y':
             file_path = ' '.join(perintah_lama.split()[2:])  # Ambil path file dari perintah
             if os.path.isfile(file_path):
-                with open(file_path, 'a') as file:
-                    file.write("\nhello world\n")
-                print("Kalimat 'hello world' telah ditambahkan ke baris akhir file.")
-
                 # Tambahkan kode berikut untuk membaca variabel dari file
                 with open(file_path, 'r') as file:
                     content = file.read()
                     username = re.search(r'username\s*=\s*str\(input\("Input Username : "\)\)', content)
                     password = re.search(r'password\s*=\s*str\(input\("Input Password : "\)\)', content)
                     port_input = re.search(r'port_input\s*=\s*input\("Masukkan port SSH \[Press Enter if default \(port 22\)\] : "\)', content)
-                    
+                    ip_input = re.search(r'ip_input\s*=\s*input\("input IP Address : "\)', content)
 
                     if username:
                         print(f"username: {username.group()}")
@@ -143,6 +139,8 @@ def edit_cron(konfigurasi_cron):
                         print(f"password: {password.group()}")
                     if port_input:
                         print(f"port: {port_input.group()}")
+                    if ip_input:
+                        print(f"ip: {ip_input.group()}")
 
                 # Tambahkan kode berikut untuk meminta pengguna apakah mereka ingin mengedit variabel
                 edit_vars = input("Apakah Anda ingin mengedit variabel ini (y/n)? ")
@@ -150,6 +148,7 @@ def edit_cron(konfigurasi_cron):
                     new_username = input(f"Masukkan nilai baru untuk username (tekan enter untuk tidak mengubah): ")
                     new_password = input(f"Masukkan nilai baru untuk password (tekan enter untuk tidak mengubah): ")
                     new_port_input = input(f"Masukkan nilai baru untuk port (tekan enter untuk tidak mengubah): ")
+                    new_ip_input = input(f"Masukkan nilai baru untuk ip (tekan enter untuk tidak mengubah): ")
 
                     # Ganti nilai variabel dalam file
                     with open(file_path, 'r') as file:
@@ -160,6 +159,8 @@ def edit_cron(konfigurasi_cron):
                         content = re.sub(r'(password\s*=\s*str\(input\("Input Password : "\)\))', f'password = "{new_password}"', content)
                     if new_port_input:
                         content = re.sub(r'port_input\s*=\s*input\("Masukkan port SSH \[Press Enter if default \(port 22\)\] : "\)', f'port_input = "{new_port_input}"', content)
+                    if new_ip_input:
+                        content = re.sub(r'ip_input\s*=\s*input\("input IP Address : "\)', f'ip_input = "{new_ip_input}"', content)
                     with open(file_path, 'w') as file:
                         file.write(content)
                     print("Variabel telah berhasil diperbarui.")
