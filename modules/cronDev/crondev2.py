@@ -122,48 +122,52 @@ def edit_cron(konfigurasi_cron):
 
         # Tambahkan kode berikut
         edit_file = input("Apakah Anda ingin mengedit file yang akan dieksekusi cron (y/n)? ")
+        # skrip edit 4 variabel sudah work
         if edit_file.lower() == 'y':
             file_path = ' '.join(perintah_lama.split()[2:])  # Ambil path file dari perintah
             if os.path.isfile(file_path):
                 # Tambahkan kode berikut untuk membaca variabel dari file
                 with open(file_path, 'r') as file:
                     content = file.read()
-                    username = re.search(r'username\s*=\s*str\(input\("Input Username : "\)\)', content)
-                    password = re.search(r'password\s*=\s*str\(input\("Input Password : "\)\)', content)
-                    port_input = re.search(r'port_input\s*=\s*input\("Masukkan port SSH \[Press Enter if default \(port 22\)\] : "\)', content)
-                    ip_input = re.search(r'ip_input\s*=\s*input\("input IP Address : "\)', content)
+                    username = re.search(r'username\s*=\s*\".*\"', content)
+                    password = re.search(r'password\s*=\s*\".*\"', content)
+                    port_input = re.search(r'port_input\s*=\s*\".*\"', content)
+                    ip_input = re.search(r'ip_input\s*=\s*\"((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(,\s*|\s*-\s*)?)*\"', content)
 
                     if username:
-                        print(f"username: {username.group()}")
+                        print(f"\nusername: {username.group().split('=')[1].strip().replace(chr(34), '')}")
                     if password:
-                        print(f"password: {password.group()}")
+                        print(f"password: {password.group().split('=')[1].strip().replace(chr(34), '')}")
                     if port_input:
-                        print(f"port: {port_input.group()}")
+                        print(f"port: {port_input.group().split('=')[1].strip().replace(chr(34), '')}")
                     if ip_input:
-                        print(f"ip: {ip_input.group()}")
+                        print(f"ip: {ip_input.group().split('=')[1].strip().replace(chr(34), '')}\n")
 
                 # Tambahkan kode berikut untuk meminta pengguna apakah mereka ingin mengedit variabel
-                edit_vars = input("Apakah Anda ingin mengedit variabel ini (y/n)? ")
+                edit_vars = input("[*] Apakah Anda ingin mengedit variabel ini (y/n)? ")
                 if edit_vars.lower() == 'y':
-                    new_username = input(f"Masukkan nilai baru untuk username (tekan enter untuk tidak mengubah): ")
-                    new_password = input(f"Masukkan nilai baru untuk password (tekan enter untuk tidak mengubah): ")
-                    new_port_input = input(f"Masukkan nilai baru untuk port (tekan enter untuk tidak mengubah): ")
-                    new_ip_input = input(f"Masukkan nilai baru untuk ip (tekan enter untuk tidak mengubah): ")
+                    new_username = input(f"[*] Masukkan nilai baru untuk username (press <enter> to no changes): ")
+                    new_password = input(f"""[*] Masukkan nilai baru untuk password (press <enter> to no changes 
+        or 
+press <space> to no password)
+: """)
+                    new_port_input = input(f"[*] Masukkan nilai baru untuk port (press <enter> to no changes): ")
+                    new_ip_input = input(f"[*] Masukkan nilai baru untuk IP Address (press <enter> to no changes): ")
 
                     # Ganti nilai variabel dalam file
                     with open(file_path, 'r') as file:
                         content = file.read()
                     if new_username:
-                        content = re.sub(r'(username\s*=\s*str\(input\("Input Username : "\)\))', f'username = "{new_username}"', content)
+                        content = re.sub(r'username\s*=\s*\".*\"', f'username = "{new_username}"', content)
                     if new_password:
-                        content = re.sub(r'(password\s*=\s*str\(input\("Input Password : "\)\))', f'password = "{new_password}"', content)
+                        content = re.sub(r'password\s*=\s*\".*\"', f'password = "{new_password}"', content)
                     if new_port_input:
-                        content = re.sub(r'port_input\s*=\s*input\("Masukkan port SSH \[Press Enter if default \(port 22\)\] : "\)', f'port_input = "{new_port_input}"', content)
+                        content = re.sub(r'port_input\s*=\s*\".*\"', f'port_input = "{new_port_input}"', content)
                     if new_ip_input:
-                        content = re.sub(r'ip_input\s*=\s*input\("input IP Address : "\)', f'ip_input = "{new_ip_input}"', content)
+                        content = re.sub(r'ip_input\s*=\s*\"((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(,\s*|\s*-\s*)?)*\"', f'ip_input = "{new_ip_input}"', content)
                     with open(file_path, 'w') as file:
                         file.write(content)
-                    print("Variabel telah berhasil diperbarui.")
+                    print("[*] Variabel telah berhasil diperbarui.")
             else:
                 print("Perintah cron tidak berisi path file yang valid.")
         else:
