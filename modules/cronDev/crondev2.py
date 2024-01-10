@@ -3,6 +3,7 @@ import re
 import os
 import shutil
 import platform
+import getpass
 
 # Fungsi untuk memeriksa sistem operasi dan file crontab
 def cek_sistem_dan_file():
@@ -87,18 +88,105 @@ def tampilkan_menu():
     pilihan = input("Masukkan pilihan Anda (1-5): ")
     return pilihan
 
+class InputModules:
+    def __init__(self, username, password, ip_address, port):
+        self.username = username
+        self.password = password
+        self.ip_address = ip_address
+        self.port = port
+
+    ## IP Address function list
+    
+    def copyMods(self, filename):  # Tambahkan argumen filename di sini
+        new_filename = filename
+        counter = 1
+        while os.path.exists(os.path.join(os.getcwd(), 'modules/cronDev/cronModules', new_filename)):
+            new_filename = f'{filename[:-3]}-{counter}.py'  # Ubah ini untuk menggunakan filename sebagai basis
+            counter += 1
+        shutil.copy2(f'./modules/{filename}', os.path.join(os.getcwd(), 'modules/cronDev/cronModules', new_filename))  # Ubah ini untuk menggunakan filename sebagai basis
+        return new_filename
+
+    def processCopyMods(self, new_filename):
+        with open(os.path.join(os.getcwd(), 'modules/cronDev/cronModules', new_filename), 'r') as file:
+            lines = file.readlines()
+
+        for i, line in enumerate(lines):
+            if re.search(r'local_file = os.path.join\(os.getcwd\(\), file\)', line):
+                lines[i] = "                local_file = os.path.join(os.getcwd(), 'fileExport', file)\n"
+        variables = ['username', 'password', 'port_input', 'ip_input']
+        values = [self.username, self.password, self.ip_address, self.port]
+        var_dict = dict(zip(variables, values))
+
+        for i, line in enumerate(lines):
+            for var in variables:
+                if re.search(fr'{var} =', line):
+                    lines[i] = f'    {var} = "{var_dict[var]}"\n'
+                    if var == 'port_input' or var == 'ip_input':
+                        lines[i] = '    ' + lines[i]
+
+        lines.append('\nmain()\n')
+
+        with open(os.path.join(os.getcwd(), 'modules/cronDev/cronModules', new_filename), 'w') as file:
+            file.writelines(lines)
+
 # Fungsi untuk menambahkan baris konfigurasi cron
 def tambahkan_cron(konfigurasi_cron):
+    print("Pilih modul yang akan diekspor:")
+    print("1. ipAddressLog.py")
+    print("2. ipAddressFileConf.py")
+    print("3. ipAddressExBoth.py")
+    print("4. hostnameLog.py")
+    print("5. hostnameFileConf.py")
+    print("6. hostnameExBoth.py")
+    module_choice = input("Masukkan nomor pilihan Anda (1-6): ")
+
+    # Membuat dictionary untuk memetakan pilihan ke nama file
+    module_dict = {
+        "1": "ipAddressLog.py",
+        "2": "ipAddressFileConf.py",
+        "3": "ipAddressExBoth.py",
+        "4": "hostnameLog.py",
+        "5": "hostnameFileConf.py",
+        "6": "hostnameExBoth.py"
+    }
+
+    # Mendapatkan nama file dari pilihan pengguna
+    filename = module_dict.get(module_choice, "ipAddressLog.py")  # Default ke "ipAddressLog.py" jika pilihan tidak valid
+
+    username = str(input("[*] input Username : "))
+    password = str(input("[*] input Password : "))
+    port = input("[*] input port (press Enter if default: 22) :")
+    ipAddr = input("[*] input IP Address : ")
+    
+    # Membuat objek dari kelas InputModules
+    input_module = InputModules(username, password, port, ipAddr)
+
+    # Membuat salinan file dengan nama yang dipilih
+    new_filename = input_module.copyMods(filename)  # Anda perlu memodifikasi metode ini untuk menerima argumen filename
+
+    # Memproses file yang baru saja dibuat
+    input_module.processCopyMods(new_filename)
+
+    print("File telah diproses dan siap untuk digunakan.")
+    
     # Menerima input dari pengguna
     menit = input("Masukkan menit (0-59 atau *, tekan enter untuk *): ") or '*'
     jam = input("Masukkan jam (0-23 atau *, tekan enter untuk *): ") or '*'
     hari_dari_bulan = input("Masukkan hari dari bulan (1-31 atau *, tekan enter untuk *): ") or '*'
     bulan = input("Masukkan bulan (1-12 atau *, tekan enter untuk *): ") or '*'
     hari_dari_minggu = input("Masukkan hari dari minggu (0-7 dimana 0 dan 7 adalah Minggu, atau *, tekan enter untuk *): ") or '*'
-    perintah = input("Masukkan perintah yang ingin dijalankan: ")
+    #perintah = input("Masukkan perintah yang ingin dijalankan: ")
+
+    # Mendapatkan username dari host sistem
+    username_host_sistem = getpass.getuser()
+    # Mendapatkan direktori kerja saat ini
+    cwd = os.getcwd()
+    perintah = f"python3 {cwd}/modules/cronDev/cronModules/{new_filename}"
+    # Membuat baris konfigurasi cron
+    cron_baru = f"{menit} {jam} {hari_dari_bulan} {bulan} {hari_dari_minggu} {username_host_sistem} {perintah}\n"
 
     # Membuat baris konfigurasi cron
-    cron_baru = f"{menit} {jam} {hari_dari_bulan} {bulan} {hari_dari_minggu} {perintah}\n"
+    #cron_baru = f"{menit} {jam} {hari_dari_bulan} {bulan} {hari_dari_minggu} {perintah}\n"
 
     try:
         with open('/etc/crontab', 'a') as file:
@@ -250,7 +338,6 @@ def main():
         status = 'inactive' if konfigurasi.startswith('# ') else 'active'
         jelaskan_konfigurasi_cron(konfigurasi, status)
     pilihan = tampilkan_menu()
-    print(f"Pilihan Anda: {pilihan}")
     if pilihan == '1':
         tambahkan_cron(konfigurasi_cron)
         tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
