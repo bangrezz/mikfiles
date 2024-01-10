@@ -275,37 +275,55 @@ press <space> to no password)
     else:
         print(f"\033[31m" + "[!]" + "\033[0m" + " Nomor konfigurasi cron tidak valid.")
 
-# Fungsi untuk menghapus baris konfigurasi cron
 def hapus_cron(konfigurasi_cron):
-    nomor_konfigurasi = int(input("Masukkan nomor konfigurasi cron yang ingin Anda hapus: "))
-    if 1 <= nomor_konfigurasi <= len(konfigurasi_cron):
-        del konfigurasi_cron[nomor_konfigurasi - 1]
-        print(f"\033[32m" + "[*]" + "\033[0m" + " Konfigurasi cron berhasil dihapus.")
-    else:
-        print(f"\033[31m" + "[!]" + "\033[0m" + " Nomor konfigurasi cron tidak valid.")
+    nomor_konfigurasi = input("Masukkan nomor konfigurasi cron yang ingin Anda hapus (pisahkan dengan koma): ")
+    nomor_konfigurasi = sorted([int(nomor) for nomor in nomor_konfigurasi.split(',')], reverse=True)
+    for nomor in nomor_konfigurasi:
+        if 1 <= nomor <= len(konfigurasi_cron):
+            # Dapatkan path file dari konfigurasi cron
+            path_file = konfigurasi_cron[nomor - 1].split()[-1]
+            # Hapus konfigurasi cron
+            del konfigurasi_cron[nomor - 1]
+            print(f"\033[32m" + "[*]" + "\033[0m" + f" Konfigurasi cron {nomor} berhasil dihapus.")
+            # Tanya pengguna apakah mereka ingin menghapus file
+            hapus_file = input(f"Anda ingin menghapus file {path_file}? (y/n): ")
+            if hapus_file.lower() == 'y':
+                # Hapus file
+                if os.path.exists(path_file):
+                    os.remove(path_file)
+                    print(f"\033[32m" + "[*]" + "\033[0m" + f" File {path_file} berhasil dihapus.")
+                else:
+                    print(f"\033[31m" + "[!]" + "\033[0m" + f" File {path_file} tidak ditemukan.")
+        else:
+            print(f"\033[31m" + "[!]" + "\033[0m" + f" Nomor konfigurasi cron {nomor} tidak valid.")
+
 
 def aktifkan_cron(konfigurasi_cron):
-    nomor_konfigurasi = int(input("Masukkan nomor konfigurasi cron yang ingin Anda aktifkan: "))
-    if 1 <= nomor_konfigurasi <= len(konfigurasi_cron):
-        if konfigurasi_cron[nomor_konfigurasi - 1].startswith('# '):
-            konfigurasi_cron[nomor_konfigurasi - 1] = konfigurasi_cron[nomor_konfigurasi - 1][2:]
-            print(f"\033[32m" + "[*]" + "\033[0m" + " Konfigurasi cron berhasil diaktifkan.")
+    nomor_konfigurasi = input("Masukkan nomor konfigurasi cron yang ingin Anda aktifkan (pisahkan dengan koma): ")
+    nomor_konfigurasi = [int(nomor) for nomor in nomor_konfigurasi.split(',')]
+    for nomor in nomor_konfigurasi:
+        if 1 <= nomor <= len(konfigurasi_cron):
+            if konfigurasi_cron[nomor - 1].startswith('# '):
+                konfigurasi_cron[nomor - 1] = konfigurasi_cron[nomor - 1][2:]
+                print(f"\033[32m" + "[*]" + "\033[0m" + f" Konfigurasi cron {nomor} berhasil diaktifkan.")
+            else:
+                print(f"\033[31m" + "[!]" + "\033[0m" + f" Konfigurasi cron {nomor} sudah aktif.")
         else:
-            print(f"\033[31m" + "[!]" + "\033[0m" + " Konfigurasi cron sudah aktif.")
-    else:
-        print(f"\033[31m" + "[!]" + "\033[0m" + " Nomor konfigurasi cron tidak valid.")
+            print(f"\033[31m" + "[!]" + "\033[0m" + f" Nomor konfigurasi cron {nomor} tidak valid.")
 
 # Fungsi untuk menonaktifkan baris konfigurasi cron
 def nonaktifkan_cron(konfigurasi_cron):
-    nomor_konfigurasi = int(input("Masukkan nomor konfigurasi cron yang ingin Anda nonaktifkan: "))
-    if 1 <= nomor_konfigurasi <= len(konfigurasi_cron):
-        if konfigurasi_cron[nomor_konfigurasi - 1].startswith('# '):
-            print(f"\033[31m" + "[!]" + "\033[0m" + " Konfigurasi cron sudah dinonaktifkan.")
+    nomor_konfigurasi = input("Masukkan nomor konfigurasi cron yang ingin Anda nonaktifkan (pisahkan dengan koma): ")
+    nomor_konfigurasi = [int(nomor) for nomor in nomor_konfigurasi.split(',')]
+    for nomor in nomor_konfigurasi:
+        if 1 <= nomor <= len(konfigurasi_cron):
+            if konfigurasi_cron[nomor - 1].startswith('# '):
+                print(f"\033[31m" + "[!]" + "\033[0m" + f" Konfigurasi cron {nomor} sudah dinonaktifkan.")
+            else:
+                konfigurasi_cron[nomor - 1] = '# ' + konfigurasi_cron[nomor - 1]
+                print(f"\033[32m" + "[*]" + "\033[0m" + f" Konfigurasi cron {nomor} berhasil dinonaktifkan.")
         else:
-            konfigurasi_cron[nomor_konfigurasi - 1] = '# ' + konfigurasi_cron[nomor_konfigurasi - 1]
-            print(f"\033[32m" + "[*]" + "\033[0m" + " Konfigurasi cron berhasil dinonaktifkan.")
-    else:
-        print(f"\033[31m" + "[!]" + "\033[0m" + " Nomor konfigurasi cron tidak valid.")
+            print(f"\033[31m" + "[!]" + "\033[0m" + f" Nomor konfigurasi cron {nomor} tidak valid.")
 
 def jelaskan_konfigurasi_cron(konfigurasi, status):
     bagian = konfigurasi.split()
