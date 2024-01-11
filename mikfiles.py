@@ -75,30 +75,9 @@ def selectionFile():
                     print("error")
                     os.system('exit')
             elif selection_file == "4": # cron with hostname
-                from modules.cronDev import crondev2
-                crondev2.main()
-                """os.system("clear")
-                from modules.cronDev import crondev as cr
-                print("=== Input user, pass, port, ip address ===")
-                username = str(input("input Username : "))
-                password = str(input("input Password : "))
-                port = input("input port (press Enter if default: 22) :")
-                ipAddr = input("input IP Address : ")
-                inputVar = cr.InputModules(username, password, ipAddr, port)
-                selectCronExport = str(input("Select input 1. Log 2. File Conf 3. Both :"))
-                if selectCronExport == "1":
-                    inputVar.ipAddrLog()
-                    inputVar.processFile_ipAddrLog()
-                elif selectCronExport == "2":
-                    inputVar.ipAddrFileConf()
-                    inputVar.processFile_ipAddrFileConf()
-                elif selectCronExport == "3":
-                    inputVar.ipAddrExBoth()
-                    inputVar.processFile_ipAddrExBoth()
-                else:
-                    print("wrong input :")
-                    exit
-                cr.main()"""
+                from modules import cronjob
+                os.system('clear')
+                cronjob.main()
             elif selection_file == "b":
                 print("Back to the previous")
                 main()
