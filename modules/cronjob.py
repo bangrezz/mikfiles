@@ -374,6 +374,3 @@ def main():
         tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
     else:
         print(f"\033[31m" + "[!]" + "\033[0m" + " Pilihan tidak valid. Silakan coba lagi.")
-
-if __name__ == "__main__":
-    main()
