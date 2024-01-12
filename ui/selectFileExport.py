@@ -1,6 +1,6 @@
 def selectFile():
     print("""
-Select to Export file
+[i] Select to Export file
             
             
 (1) Export log file

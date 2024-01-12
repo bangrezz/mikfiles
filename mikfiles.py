@@ -1,7 +1,4 @@
 import os
-import time
-
-os.system('')
 
 def selectionFile():
     os.system('clear')
@@ -16,7 +13,7 @@ def selectionFile():
     selectFileExport.selectFile()
     def selectFilesNum():
         try:
-            selection_file = str(input("""Select 1/2/3/4/b/q 
+            selection_file = str(input("""[->] Select 1/2/3/4/b/q 
 : """))
             if selection_file == "1": # export log file
                 from modules import hostnameLog
@@ -53,7 +50,7 @@ def selectionFile():
                     inputPrep.inputPrep()
                     ipAddressFileConf.main()
                 else:
-                    print("error")
+                    print(f"\033[31m" + "[!]" + "\033[0m" + "Error")
                     os.system('exit')
             elif selection_file == "3": # Export both
                 print("Export both")
@@ -72,7 +69,7 @@ def selectionFile():
                     inputPrep.inputPrep()
                     ipAddressExBoth.main()
                 else:
-                    print("error")
+                    print(f"\033[31m" + "[!]" + "\033[0m" + "Error")
                     os.system('exit')
             elif selection_file == "4": # cron with hostname
                 from modules import cronjob
@@ -82,7 +79,7 @@ def selectionFile():
                 print("Back to the previous")
                 main()
             elif selection_file == "q":
-                print("\nExit mikfiles")
+                print("\n[i] Exit mikfiles")
                 os.system('exit')
             else:
                 print("\n\033[31m"+"[!] Error. Select menu correctly !" + "\033[0m")
@@ -91,7 +88,7 @@ def selectionFile():
             print("\n\033[31m"+"[!] Invalid value input. Repeat again !" + "\033[0m")
             selectFilesNum()
         except KeyboardInterrupt:
-            print("\nExit mikfiles ...")
+            print("\n\n[i] Exit mikfiles ...")
             os.system('exit')
     selectFilesNum()
 
@@ -104,13 +101,13 @@ def main():
     def selectionFormat():
         try:
             global selection_format
-            selection_format = str(input("Select 1/2/q : "))
+            selection_format = str(input("[->] Select 1/2/q : "))
             if selection_format == "1":
                 selectionFile()
             elif selection_format == "2":
                 selectionFile()
             elif selection_format == "q":
-                print("\nExit mikfiles ...")
+                print("\n[i] Exit mikfiles ...")
                 os.system('exit')
             else:
                 print("\n\033[31m"+"[!] Error. Select menu correctly !" + "\033[0m")
@@ -119,7 +116,7 @@ def main():
             print("\n\033[31m"+"[!] Invalid value input. Repeat again !" + "\033[0m")
             selectionFormat()
         except KeyboardInterrupt:
-            print("Exit mikfiles ...")
+            print("\n\n[i] Exit mikfiles ...")
             os.system('exit')
     selectionFormat()
 

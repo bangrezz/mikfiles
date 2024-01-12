@@ -1,7 +1,6 @@
 import paramiko
 import ipaddress
 import socket
-import sys
 import os
 import datetime
 import time
@@ -14,7 +13,7 @@ def login_mikrotik(ip, username, password, port):
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         ssh.connect(ip, port=port, username=username, password=password, timeout=3)
-        print("\033[32m" + f"[+] Berhasil login ke {ip}" + "\033[0m")
+        print("\033[32m" + f"[i] Berhasil login ke {ip}" + "\033[0m")
 
         # Get the hostname
         stdin, stdout, stderr = ssh.exec_command(":put [/system identity get name]")
@@ -30,7 +29,7 @@ def login_mikrotik(ip, username, password, port):
         # Export the log file
         command = f"/log print file={log_filename}"
         stdin, stdout, stderr = ssh.exec_command(command)
-        print(f"[*] Eksekusi perintah '{command}' di {ip}:")
+        print(f"[i] Eksekusi perintah '{command}' di {ip}:")
         print(stdout.read().decode())
 
         time.sleep(5)  # wait for 5 seconds
@@ -62,32 +61,32 @@ def login_mikrotik(ip, username, password, port):
 
     except socket.timeout:
         print("\033[31m" + f"[!] Target {ip} tidak ada: Connection timed out." + "\033[0m")
-        print("[*] Maybe devices is off or filtered by firewall devices")
+        print("[i] Maybe devices is off or filtered by firewall devices")
     except paramiko.AuthenticationException:
-        print(f"[!] Gagal login ke {ip} authentication failed")
+        print(f"\033[31m" + "[!]" + "\033[0m" + " Gagal login ke {ip} authentication failed")
     except Exception as e:
-        print(f"[*] Gagal login ke {ip}: {e}")
+        print(f"\033[31m" + "[!]" + "\033[0m" + " Gagal login ke {ip}: {e}")
     finally:
         ssh.close()
             
 def main():
-    username = str(input("Input Username : "))
-    password = str(input("Input Password : "))
+    username = str(input("[+] Input Username : "))
+    password = str(input("[+] Input Password : "))
     port = 22  # Default port value
     
     def portInput():
         nonlocal port
-        port_input = input("Masukkan port SSH [Press Enter if default (port 22)] : ")
+        port_input = input("[+] Masukkan port SSH [Press Enter if default (port 22)] : ")
         if port_input:
             try:
                 port = int(port_input)
             except ValueError:
-                print("\n [!] Port harus berupa angka.")
+                print(f"\n\033[31m" + "[!]" + "\033[0m" + " Port harus berupa angka.")
                 portInput()
     portInput()
 
     def AddrInput():
-        ip_input = input("input IP Address : ")
+        ip_input = input("[+] Input IP Address : ")
 
         # Memisahkan input berdasarkan koma dan menghapus spasi
         ip_entries = [ip.strip() for ip in ip_input.split(',')]
@@ -109,6 +108,6 @@ def main():
                     ipaddress.IPv4Address(entry)  # Memvalidasi alamat IP
                     login_mikrotik(entry, username, password, port)
                 except ipaddress.AddressValueError as ave:
-                    print(f"Alamat IP tidak valid: {ave}")
+                    print(f"\033[31m" + "[!]" + "\033[0m" + " Alamat IP tidak valid: {ave}")
                     AddrInput()
     AddrInput()
