@@ -1,4 +1,5 @@
 import os
+import readline
 
 def selectionFile():
     os.system('clear')
