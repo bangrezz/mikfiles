@@ -1,5 +1,6 @@
 import os
 import readline
+import sys
 
 def selectionFile():
     os.system('clear')
@@ -9,13 +10,12 @@ def selectionFile():
     elif selection_format == "2":
         inputPrep.ipAddrDefSelection()
     else:
-        print("unknown")
-    from ui import selectFileExport
-    selectFileExport.selectFile()
+        print("unknown select")
     def selectFilesNum():
         try:
-            selection_file = str(input("""[->] Select 1/2/3/4/b/q 
-: """))
+            from ui import selectFileExport
+            selectFileExport.selectFile()
+            selection_file = str(input("""[->] Select 1/2/3/4/b/q : """))
             if selection_file == "1": # export log file
                 from modules import hostnameLog
                 from modules import ipAddressLog
@@ -33,7 +33,7 @@ def selectionFile():
                     ipAddressLog.main()
                 else:
                     print("error")
-                    os.system('exit')
+                    sys.exit(0)
             elif selection_file == "2": # export file config and backup
                 print("Export file configuration and backup file")
                 from modules import hostnameFileConf
@@ -52,7 +52,7 @@ def selectionFile():
                     ipAddressFileConf.main()
                 else:
                     print(f"\033[31m" + "[!]" + "\033[0m" + "Error")
-                    os.system('exit')
+                    sys.exit(0)
             elif selection_file == "3": # Export both
                 print("Export both")
                 from modules import hostnameExBoth
@@ -71,17 +71,30 @@ def selectionFile():
                     ipAddressExBoth.main()
                 else:
                     print(f"\033[31m" + "[!]" + "\033[0m" + "Error")
-                    os.system('exit')
-            elif selection_file == "4": # cron with hostname
+                    sys.exit(0)
+            elif selection_file == "4":
                 from modules import cronjob
                 os.system('clear')
                 cronjob.main()
+                if selection_format == "1":
+                    from ui import inputPrep
+                    from ui import selectFileExport
+                    inputPrep.hostnameDefSelection()
+                    selectFilesNum()
+                elif selection_format == "2":
+                    from ui import inputPrep
+                    from ui import selectFileExport
+                    inputPrep.ipAddrDefSelection()
+                    selectFilesNum()
+                else:
+                    print('error')
             elif selection_file == "b":
-                print("Back to the previous")
+                print("[i] Back to the previous")
                 main()
             elif selection_file == "q":
-                print("\n[i] Exit mikfiles")
-                os.system('exit')
+                print("\n[i] Exit mikfiles ...")
+                sys.exit(0)
+                exit
             else:
                 print("\n\033[31m"+"[!] Error. Select menu correctly !" + "\033[0m")
                 selectFilesNum()    
@@ -90,7 +103,7 @@ def selectionFile():
             selectFilesNum()
         except KeyboardInterrupt:
             print("\n\n[i] Exit mikfiles ...")
-            os.system('exit')
+            sys.exit(0)
     selectFilesNum()
 
 def main():
@@ -109,7 +122,7 @@ def main():
                 selectionFile()
             elif selection_format == "q":
                 print("\n[i] Exit mikfiles ...")
-                os.system('exit')
+                sys.exit(0)
             else:
                 print("\n\033[31m"+"[!] Error. Select menu correctly !" + "\033[0m")
                 selectionFormat()
@@ -118,7 +131,7 @@ def main():
             selectionFormat()
         except KeyboardInterrupt:
             print("\n\n[i] Exit mikfiles ...")
-            os.system('exit')
+            sys.exit(0)
     selectionFormat()
 
 if __name__ == "__main__":

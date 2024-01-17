@@ -1,4 +1,5 @@
 # origin file
+import sys
 import re
 import os
 import shutil
@@ -88,7 +89,9 @@ def tulis_crontab(konfigurasi_cron, komentar_dan_non_cron):
 # Fungsi untuk menampilkan menu dan memproses pilihan pengguna
 def tampilkan_menu():
     print("\nMenu:")
-    print("(1) Add   (2) Edit    (3) Delete   (4) Disable   (5) Enable")
+    print("""(1) Add   (2) Edit    (3) Delete   (4) Disable   (5) Enable    
+(b) Back    (q) Exit
+          """)
     pilihan = input("[->] Select your choice (1-5): ")
     return pilihan
 
@@ -378,6 +381,26 @@ def jelaskan_konfigurasi_cron(konfigurasi, status):
     else:
         print(f"\033[31m" + "[!]" + "\033[0m" + " Cron configuration doesn't valid !")
 
+def BackOpt():
+    # this function to Back or exit after execute menu of cronjob
+    print("""\n[i] Select what you want 
+(1) Back to Cron Menu
+(2) Back to Select Export File Menu
+(3) Exit
+        """)
+    sel = input("[->] : ")
+    if sel == "1":
+        os.system('clear')
+        main()
+    elif sel == "2":
+        pass
+        # Back to select file export
+    elif sel == "3":
+        print("\nExit mikfiles ...")
+        sys.exit(0)
+    else:
+        print("error")
+
 def main():
     # checking crontab file
     cek_sistem_dan_file()
@@ -394,17 +417,27 @@ def main():
         tambahkan_cron(konfigurasi_cron)
         tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
         konfigurasi_cron, komentar_dan_non_cron = baca_crontab()
+        BackOpt()
     elif pilihan == '2':
         edit_cron(konfigurasi_cron)
         tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
+        BackOpt()
     elif pilihan == '3':
         hapus_cron(konfigurasi_cron)
         tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
+        BackOpt()
     elif pilihan == '4':
         nonaktifkan_cron(konfigurasi_cron)
         tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
+        BackOpt()
     elif pilihan == '5':
         aktifkan_cron(konfigurasi_cron)
         tulis_crontab(konfigurasi_cron, komentar_dan_non_cron)
+        BackOpt()
+    elif pilihan == 'b':
+        pass
+    elif pilihan == 'q':
+        print('\n[i] Exit mikfiles ...')
+        sys.exit(0)
     else:
         print(f"\033[31m" + "[!]" + "\033[0m" + " Invalid value input. Repeat again !")
