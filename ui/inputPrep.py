@@ -25,10 +25,12 @@ def inputPrep():
     print("""
 [i] Input range IP Address with format in below
              
-        192.168.1.1 [single IP Address]
-            or
-        192.168.1.0/24
-            or
-        192.168.1.1-192.168.1.100 (no space between '-')
+->  192.168.1.1 [single IP Address]
+        or
+->  192.168.1.0/24 [Network Address]
+        or
+->  192.168.1.1-192.168.1.100 (no space between '-')
 
+[i] You can input 3 format in 1 input. Example :
+    192.168.1.1,192.168.1.1-192.168.1.100,192.168.1.0/24
         """)
