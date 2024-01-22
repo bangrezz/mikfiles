@@ -91,46 +91,74 @@ def login_mikrotik(ip, username, password, port, login_status):
         return False
     finally:
         ssh.close()
-            
+
 def main():
     username = str(input("[+] Input Username : "))
     password = str(input("[+] Input Password : "))
-    ports_input = input("[+] Input SSH ports (comma separated) [Press Enter if default (port 22)] : ")
-    ports = [int(port.strip()) for port in ports_input.split(',')] if ports_input else [22]
-    
+
+    while True:
+        ports_input = input("[+] Input SSH ports (comma separated) [Press Enter if default (port 22)] : ")
+        ports = [port.strip() for port in ports_input.split(',')] if ports_input else ['22']
+        if not all(port.isdigit() for port in ports):
+            print("Invalid input. Please enter numbers only.")
+        else:
+            ports = [int(port) for port in ports]
+            break
+
     login_status = {}
 
-    def AddrInput():
+    while True:
         ip_input = input("[+] input IP Address : ")
-
-        # Memisahkan input berdasarkan koma dan menghapus spasi
         ip_entries = [ip.strip() for ip in ip_input.split(',')]
-        for entry in ip_entries:
-            if '-' in entry:
-                start_ip, end_ip = entry.split('-')
-                start_ip = ipaddress.IPv4Address(start_ip)
-                end_ip = ipaddress.IPv4Address(end_ip)
+        if not all(validate_ip(ip) for ip in ip_entries):
+            print("Invalid input. Please enter valid IP addresses.")
+        else:
+            break
 
-                for ip_int in range(int(start_ip), int(end_ip) + 1):
-                    ip = ipaddress.IPv4Address(ip_int)
-                    for port in ports:
-                        if login_mikrotik(str(ip), username, password, port, login_status):
-                            break
-            elif '/' in entry:
-                ip_range = ipaddress.ip_network(entry, strict=False)
-                for ip in ip_range.hosts():
-                    for port in ports:
-                        if login_mikrotik(str(ip), username, password, port, login_status):
-                            break
-            else:
-                try:
-                    ipaddress.IPv4Address(entry)  # Memvalidasi alamat IP
-                    for port in ports:
-                        if login_mikrotik(entry, username, password, port, login_status):
-                            break
-                except ipaddress.AddressValueError as ave:
-                    print(f"\033[31m" + "[!]" + "\033[0m" + f" IP Address doesn't valid: {ave}")
+    for entry in ip_entries:
+        if '-' in entry:
+            start_ip, end_ip = entry.split('-')
+            start_ip = ipaddress.IPv4Address(start_ip)
+            end_ip = ipaddress.IPv4Address(end_ip)
 
-                    AddrInput()
-    AddrInput()
+            for ip_int in range(int(start_ip), int(end_ip) + 1):
+                ip = ipaddress.IPv4Address(ip_int)
+                for port in ports:
+                    if login_mikrotik(str(ip), username, password, port, login_status):
+                        break
+        elif '/' in entry:
+            ip_range = ipaddress.ip_network(entry, strict=False)
+            for ip in ip_range.hosts():
+                for port in ports:
+                    if login_mikrotik(str(ip), username, password, port, login_status):
+                        break
+        else:
+            try:
+                ipaddress.IPv4Address(entry)  # Memvalidasi alamat IP
+                for port in ports:
+                    if login_mikrotik(entry, username, password, port, login_status):
+                        break
+            except ipaddress.AddressValueError as ave:
+                print(f"\033[31m" + "[!]" + "\033[0m" + f" IP Address doesn't valid: {ave}")
+
+def validate_ip(ip):
+    if '-' in ip:
+        start_ip, end_ip = ip.split('-')
+        return validate_single_ip(start_ip) and validate_single_ip(end_ip)
+    elif '/' in ip:
+        try:
+            ipaddress.ip_network(ip, strict=False)
+            return True
+        except ValueError:
+            return False
+    else:
+        return validate_single_ip(ip)
+
+def validate_single_ip(ip):
+    try:
+        ipaddress.IPv4Address(ip)
+        return True
+    except ValueError:
+        return False
+
 main()
