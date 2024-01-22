@@ -236,24 +236,6 @@ def tambahkan_cron(konfigurasi_cron):
     print(f"\033[32m" + "[i]" + "\033[0m" + " The file has been processed and is ready to use.")
     
     # Menerima input dari pengguna
-    """print("[i] You can press <enter> to -> * or input manually *")
-    menit = input("[+] Input minutes (0-59): ") or '*'
-    jam = input("[+] Input hours (0-23): ") or '*'
-    hari_dari_bulan = input("[+] Input Days of The Month (1-31): ") or '*'
-    bulan = input("[+] Input Months (1-12): ") or '*'
-    hari_dari_minggu = input("[+] Input Days of The Week (0-7 for 0 and 7 is Sunday): ") or '*'
-
-    # Mendapatkan username dari host sistem
-    username_host_sistem = getpass.getuser()
-    # Mendapatkan direktori kerja saat ini
-    cwd = os.getcwd()
-    perintah = f"python3 {cwd}/modules/cronModules/{new_filename}"
-    # Membuat baris konfigurasi cron
-    cron_baru = f"{menit} {jam} {hari_dari_bulan} {bulan} {hari_dari_minggu} {username_host_sistem} {perintah}\n"
-
-    # Membuat baris konfigurasi cron
-    #cron_baru = f"{menit} {jam} {hari_dari_bulan} {bulan} {hari_dari_minggu} {perintah}\n"
-"""
     # new code for detect error cron value
     input_prompts = {
     "menit": {"prompt": "[+] Input minutes (0-59): ", "min": 0, "max": 59},
