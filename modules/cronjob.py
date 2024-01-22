@@ -136,6 +136,37 @@ class InputModules:
         with open(os.path.join(os.getcwd(), 'modules/cronModules', new_filename), 'w') as file:
             file.writelines(lines)
 
+def valid_ip(ip):
+    # Regex untuk validasi IP Address
+    regex = r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    # Regex untuk validasi Network Address
+    regex_net = r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/(?:[0-9]|[1-2][0-9]|3[0-2])$"
+    # Regex untuk validasi IP Range
+    regex_range = r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)-(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    # Pisahkan IP Address dengan koma
+    ips = ip.split(',')
+    # Cek apakah setiap IP Address valid
+    for ip in ips:
+        if not (re.search(regex, ip) or re.search(regex_net, ip) or re.search(regex_range, ip)):
+            return False
+    return True
+
+def valid_ports(ports):
+    # Pisahkan input berdasarkan koma
+    ports = ports.split(',')
+    # Cek apakah setiap port valid
+    for port in ports:
+        if not port.isdigit() or int(port) < 1 or int(port) > 65535:
+            return False
+    return True
+
+def valid_cronInput(input, min, max):
+    if input == '*':
+        return True
+    elif not input.isdigit() or int(input) < min or int(input) > max:
+        return False
+    return True
+
 # Fungsi untuk menambahkan baris konfigurasi cron
 def tambahkan_cron(konfigurasi_cron):
     # Generate table list of modules
@@ -176,8 +207,22 @@ def tambahkan_cron(konfigurasi_cron):
 
     username = str(input("[+] input Username : "))
     password = str(input("[+] input Password : "))
-    port = input("[+] input port (press <enter> if default: 22) :")
-    ipAddr = input("[+] input IP Address : ")
+    
+    # Input untuk port
+    while True:
+        port = input("[+] input port (1-65535) (press <enter> if default: 22) :") or '22'
+        if not valid_ports(port):
+            print(f"\033[31m" + "[!]" + "\033[0m" + " Port must be number, try again !")
+        else:
+            break
+
+    # IP Address input
+    while True:
+        ipAddr = input("[+] input IP Address (press <enter> to skip) :")
+        if not valid_ip(ipAddr):
+            print(f"\033[31m" + "[!]" + "\033[0m" + " IP Address doesn't valid, try again !.")
+        else:
+            break
     
     # Membuat objek dari kelas InputModules
     input_module = InputModules(username, password, port, ipAddr)
@@ -191,13 +236,12 @@ def tambahkan_cron(konfigurasi_cron):
     print(f"\033[32m" + "[i]" + "\033[0m" + " The file has been processed and is ready to use.")
     
     # Menerima input dari pengguna
-    print("[i] You can press <enter> to -> * or input manually *")
+    """print("[i] You can press <enter> to -> * or input manually *")
     menit = input("[+] Input minutes (0-59): ") or '*'
     jam = input("[+] Input hours (0-23): ") or '*'
     hari_dari_bulan = input("[+] Input Days of The Month (1-31): ") or '*'
     bulan = input("[+] Input Months (1-12): ") or '*'
     hari_dari_minggu = input("[+] Input Days of The Week (0-7 for 0 and 7 is Sunday): ") or '*'
-    #perintah = input("Masukkan perintah yang ingin dijalankan: ")
 
     # Mendapatkan username dari host sistem
     username_host_sistem = getpass.getuser()
@@ -209,7 +253,34 @@ def tambahkan_cron(konfigurasi_cron):
 
     # Membuat baris konfigurasi cron
     #cron_baru = f"{menit} {jam} {hari_dari_bulan} {bulan} {hari_dari_minggu} {perintah}\n"
+"""
+    # new code for detect error cron value
+    input_prompts = {
+    "menit": {"prompt": "[+] Input minutes (0-59): ", "min": 0, "max": 59},
+    "jam": {"prompt": "[+] Input hours (0-23): ", "min": 0, "max": 23},
+    "hari_dari_bulan": {"prompt": "[+] Input Days of The Month (1-31): ", "min": 1, "max": 31},
+    "bulan": {"prompt": "[+] Input Months (1-12): ", "min": 1, "max": 12},
+    "hari_dari_minggu": {"prompt": "[+] Input Days of The Week (0-7 for 0 and 7 is Sunday): ", "min": 0, "max": 7}
+}
 
+    inputs = {}
+
+    for key, value in input_prompts.items():
+        while True:
+            user_input = input(value["prompt"]) or '*'
+            if valid_cronInput(user_input, value["min"], value["max"]):
+                inputs[key] = user_input
+                break
+            else:
+                print("Input tidak valid. Silakan coba lagi.")
+
+    username_host_sistem = getpass.getuser()
+    # Mendapatkan direktori kerja saat ini
+    cwd = os.getcwd()
+    perintah = f"python3 {cwd}/modules/cronModules/{new_filename}"
+    # Membuat baris konfigurasi cron
+    cron_baru = f"{inputs['menit']} {inputs['jam']} {inputs['hari_dari_bulan']} {inputs['bulan']} {inputs['hari_dari_minggu']} {username_host_sistem} {perintah}\n"
+    
     try:
         with open('/etc/crontab', 'a') as file:
             file.write(cron_baru)
@@ -260,9 +331,25 @@ def edit_cron(konfigurasi_cron):
                 new_password = input(f"""[+] Input new password (press <enter> to no changes 
                         or 
                     press <space> to no password)
-                : """)
-                new_port_input = input(f"[+] Input new port (press <enter> to no changes): ")
-                new_ip_input = input(f"[+] Input new IP Address (press <enter> to no changes): ")
+                    : """)
+
+                # Input untuk port
+                while True:
+                    new_port_input = input("[+] input port (1-65535) (press <enter> if default: 22) :") or '22'
+                    if not valid_ports(new_port_input):
+                        print(f"\033[31m" + "[!]" + "\033[0m" + " Port must be number, try again !")
+                    else:
+                        break
+
+                # IP Address input
+                while True:
+                    new_ip_input = input("[+] input IP Address (press <enter> to skip) :")
+                    if new_ip_input == '':
+                        break
+                    elif not valid_ip(new_ip_input):
+                        print(f"\033[31m" + "[!]" + "\033[0m" + " IP Address doesn't valid, try again !.")
+                    else:
+                        break
 
                 # Ganti nilai variabel dalam file
                 with open(file_path, 'r') as file:
@@ -280,14 +367,30 @@ def edit_cron(konfigurasi_cron):
                 print(f"\033[32m" + "[i]" + "\033[0m" + " The variables has been edited.")
         else:
             print(f"\033[31m" + "[i]" + "\033[0m" + " The cron command doesn't contain a valid file path !")
-        
-        menit = input(f"[+] Input new Minutes (0-59 or *, press <enter> to no changes): ") or menit_lama
-        jam = input(f"[+] Input new Hours (0-23 or *, press <enter> to no changes): ") or jam_lama
-        hari_dari_bulan = input(f"[+] Input new Day of The Month (1-31 or *, press <enter> to no changes): ") or hari_dari_bulan_lama
-        bulan = input(f"[+] Input new Months (1-12 or *, press <enter> to no changes): ") or bulan_lama
-        hari_dari_minggu = input(f"[+] Input new Day of The Week (0-7 for 0 and 7 is Sunday, or *, press <enter> to no changes): ") or hari_dari_minggu_lama
+
+        # new edit cron code
+        input_prompts = {
+    "menit": {"prompt": "[+] Input new Minutes (0-59 or *, press <enter> to no changes): ", "min": 0, "max": 59, "default": menit_lama},
+    "jam": {"prompt": "[+] Input new Hours (0-23 or *, press <enter> to no changes): ", "min": 0, "max": 23, "default": jam_lama},
+    "hari_dari_bulan": {"prompt": "[+] Input new Day of The Month (1-31 or *, press <enter> to no changes): ", "min": 1, "max": 31, "default": hari_dari_bulan_lama},
+    "bulan": {"prompt": "[+] Input new Months (1-12 or *, press <enter> to no changes): ", "min": 1, "max": 12, "default": bulan_lama},
+    "hari_dari_minggu": {"prompt": "[+] Input new Day of The Week (0-7 for 0 and 7 is Sunday, or *, press <enter> to no changes): ", "min": 0, "max": 7, "default": hari_dari_minggu_lama}
+}
+
+        inputs = {}
+
+        for key, value in input_prompts.items():
+            while True:
+                user_input = input(value["prompt"]) or value["default"]
+                if valid_cronInput(user_input, value["min"], value["max"]):
+                    inputs[key] = user_input
+                    break
+                else:
+                    print("Input tidak valid. Silakan coba lagi.")
+
         perintah = input(f"[+] Input new command to be execute (press <enter> to no changes): ") or perintah_lama
-        konfigurasi_cron[nomor - 1] = f"{menit} {jam} {hari_dari_bulan} {bulan} {hari_dari_minggu} {perintah}"
+        konfigurasi_cron[nomor - 1] = f"{inputs['menit']} {inputs['jam']} {inputs['hari_dari_bulan']} {inputs['bulan']} {inputs['hari_dari_minggu']} {perintah}"
+
         with open('/etc/crontab', 'w') as file:
             for konfigurasi in konfigurasi_cron:
                 file.write(f"{konfigurasi}\n")
