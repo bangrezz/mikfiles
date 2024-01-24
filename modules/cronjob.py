@@ -120,7 +120,7 @@ class InputModules:
         for i, line in enumerate(lines):
             if re.search(r'local_file = os.path.join\(os.getcwd\(\), file\)', line):
                 lines[i] = "                local_file = os.path.join(os.getcwd(), 'fileExport', file)\n"
-        variables = ['username', 'password', 'port_input', 'ip_input']
+        variables = ['username', 'password', 'ports_input', 'ip_input']
         values = [self.username, self.password, self.ip_address, self.port]
         var_dict = dict(zip(variables, values))
 
@@ -128,7 +128,7 @@ class InputModules:
             for var in variables:
                 if re.search(fr'{var} =', line):
                     lines[i] = f'    {var} = "{var_dict[var]}"\n'
-                    if var == 'port_input' or var == 'ip_input':
+                    if var == 'ports_input' or var == 'ip_input':
                         lines[i] = '    ' + lines[i]
 
         lines.append('\nmain()\n')
@@ -293,7 +293,7 @@ def edit_cron(konfigurasi_cron):
                 content = file.read()
                 username = re.search(r'username\s*=\s*\".*\"', content)
                 password = re.search(r'password\s*=\s*\".*\"', content)
-                port_input = re.search(r'port_input\s*=\s*\".*\"', content)
+                ports_input = re.search(r'ports_input\s*=\s*\".*\"', content)
                 ip_input = re.search(r'ip_input\s*=\s*\"((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(,\s*|\s*-\s*)?)*\"', content)
 
                 print(f"\033[32m" + "[i]" + "\033[0m" + " Show the variables")
@@ -301,8 +301,8 @@ def edit_cron(konfigurasi_cron):
                     print(f"[*] Username: {username.group().split('=')[1].strip().replace(chr(34), '')}")
                 if password:
                     print(f"[*] Password: {password.group().split('=')[1].strip().replace(chr(34), '')}")
-                if port_input:
-                    print(f"[*] Port: {port_input.group().split('=')[1].strip().replace(chr(34), '')}")
+                if ports_input:
+                    print(f"[*] Port: {ports_input.group().split('=')[1].strip().replace(chr(34), '')}")
                 if ip_input:
                     print(f"[*] IP: {ip_input.group().split('=')[1].strip().replace(chr(34), '')}\n")
 
@@ -341,7 +341,7 @@ def edit_cron(konfigurasi_cron):
                 if new_password:
                     content = re.sub(r'password\s*=\s*\".*\"', f'password = "{new_password}"', content)
                 if new_port_input:
-                    content = re.sub(r'port_input\s*=\s*\".*\"', f'port_input = "{new_port_input}"', content)
+                    content = re.sub(r'ports_input\s*=\s*\".*\"', f'port_input = "{new_port_input}"', content)
                 if new_ip_input:
                     content = re.sub(r'ip_input\s*=\s*\"((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))(,\s*|\s*-\s*)?)*\"', f'ip_input = "{new_ip_input}"', content)
                 with open(file_path, 'w') as file:
