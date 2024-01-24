@@ -6,12 +6,18 @@ import datetime
 import time
 import re
 
-def login_mikrotik(ip, username, password, port):
+def login_mikrotik(ip, username, password, port, login_status):
+    if login_status.get(ip, False):
+        print("\033[32m" + f"[i] {ip} already logged in, skipping..." + "\033[0m")
+        return False
+
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         ssh.connect(ip, port=port, username=username, password=password, timeout=3)
-        print("\033[32m" + f"[i] Successfull {ip}" + "\033[0m")
+        print("\033[32m" + f"[i] Successfull {ip}:{port}" + "\033[0m")
+
+        login_status[ip] = True
 
         # Get the hostname
         stdin, stdout, stderr = ssh.exec_command(":put [/system identity get name]")
@@ -56,56 +62,83 @@ def login_mikrotik(ip, username, password, port):
 
         # Menutup koneksi
         sftp.close()
-
+        return True
     except socket.timeout:
-        print("\033[31m" + f"[!] Target {ip} none: Connection timed out." + "\033[0m")
+        print("\033[31m" + f"[!] Target {ip}:{port} none: Connection timed out." + "\033[0m")
         print("[i] Maybe devices is off or filtered by firewall devices")
     except paramiko.AuthenticationException:
-        print(f"\033[31m" + "[!]" + "\033[0m" + f" Failed login to {ip} authentication failed")
+        print(f"\033[31m" + "[!]" + "\033[0m" + f" Failed login to {ip}:{port} authentication failed")
     except Exception as e:
-        print(f"\033[31m" + "[!]" + "\033[0m" + f" Failed login to {ip}: {e}")
+        print(f"\033[31m" + "[!]" + "\033[0m" + f" Failed login to {ip}:{port}: {e}")
+        return False
     finally:
         ssh.close()
-            
+
 def main():
     username = str(input("[+] Input Username : "))
     password = str(input("[+] Input Password : "))
-    port = 22  # Default port value
-    
-    def portInput():
-        nonlocal port
-        port_input = input("[+] Input SSH port [Press Enter if default (port 22)] : ")
-        if port_input:
-            try:
-                port = int(port_input)
-            except ValueError:
-                print(f"\n\033[31m" + "[!]" + "\033[0m" + " Port must be number !")
-                portInput()
-    portInput()
 
-    def AddrInput():
+    while True:
+        ports_input = input("[+] Input SSH ports (comma separated) [Press Enter if default (port 22)] : ")
+        ports = [port.strip() for port in ports_input.split(',')] if ports_input else ['22']
+        if not all(port.isdigit() for port in ports):
+            print("Invalid input. Please enter numbers only.")
+        else:
+            ports = [int(port) for port in ports]
+            break
+
+    login_status = {}
+
+    while True:
         ip_input = input("[+] input IP Address : ")
-
-        # Memisahkan input berdasarkan koma dan menghapus spasi
         ip_entries = [ip.strip() for ip in ip_input.split(',')]
-        for entry in ip_entries:
-            if '-' in entry:
-                start_ip, end_ip = entry.split('-')
-                start_ip = ipaddress.IPv4Address(start_ip)
-                end_ip = ipaddress.IPv4Address(end_ip)
+        if not all(validate_ip(ip) for ip in ip_entries):
+            print("Invalid input. Please enter valid IP addresses.")
+        else:
+            break
 
-                for ip_int in range(int(start_ip), int(end_ip) + 1):
-                    ip = ipaddress.IPv4Address(ip_int)
-                    login_mikrotik(str(ip), username, password, port)
-            elif '/' in entry:
-                ip_range = ipaddress.ip_network(entry, strict=False)
-                for ip in ip_range.hosts():
-                    login_mikrotik(str(ip), username, password, port)
-            else:
-                try:
-                    ipaddress.IPv4Address(entry)  # Memvalidasi alamat IP
-                    login_mikrotik(entry, username, password, port)
-                except ipaddress.AddressValueError as ave:
-                    print(f"\033[31m" + "[!]" + "\033[0m" + f" IP Address doesn't valid: {ave}")
-                    AddrInput()
-    AddrInput()
+    for entry in ip_entries:
+        if '-' in entry:
+            start_ip, end_ip = entry.split('-')
+            start_ip = ipaddress.IPv4Address(start_ip)
+            end_ip = ipaddress.IPv4Address(end_ip)
+
+            for ip_int in range(int(start_ip), int(end_ip) + 1):
+                ip = ipaddress.IPv4Address(ip_int)
+                for port in ports:
+                    if login_mikrotik(str(ip), username, password, port, login_status):
+                        break
+        elif '/' in entry:
+            ip_range = ipaddress.ip_network(entry, strict=False)
+            for ip in ip_range.hosts():
+                for port in ports:
+                    if login_mikrotik(str(ip), username, password, port, login_status):
+                        break
+        else:
+            try:
+                ipaddress.IPv4Address(entry)  # Memvalidasi alamat IP
+                for port in ports:
+                    if login_mikrotik(entry, username, password, port, login_status):
+                        break
+            except ipaddress.AddressValueError as ave:
+                print(f"\033[31m" + "[!]" + "\033[0m" + f" IP Address doesn't valid: {ave}")
+
+def validate_ip(ip):
+    if '-' in ip:
+        start_ip, end_ip = ip.split('-')
+        return validate_single_ip(start_ip) and validate_single_ip(end_ip)
+    elif '/' in ip:
+        try:
+            ipaddress.ip_network(ip, strict=False)
+            return True
+        except ValueError:
+            return False
+    else:
+        return validate_single_ip(ip)
+
+def validate_single_ip(ip):
+    try:
+        ipaddress.IPv4Address(ip)
+        return True
+    except ValueError:
+        return False
