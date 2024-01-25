@@ -100,7 +100,7 @@ def main():
         ports_input = input("[+] Input SSH ports (comma separated) [Press Enter if default (port 22)] : ")
         ports = [port.strip() for port in ports_input.split(',')] if ports_input else ['22']
         if not all(port.isdigit() for port in ports):
-            print("Invalid input. Please enter numbers only.")
+            print(f"\033[31m" + "[!]" + "\033[0m" + "Invalid input. Input number only !")
         else:
             ports = [int(port) for port in ports]
             break
@@ -111,7 +111,7 @@ def main():
         ip_input = input("[+] input IP Address : ")
         ip_entries = [ip.strip() for ip in ip_input.split(',')]
         if not all(validate_ip(ip) for ip in ip_entries):
-            print("Invalid input. Please enter valid IP addresses.")
+            print(f"\033[31m" + "[!]" + "\033[0m" + "Invalid input. Please enter valid IP addresses !")
         else:
             break
 

@@ -254,7 +254,7 @@ def tambahkan_cron(konfigurasi_cron):
                 inputs[key] = user_input
                 break
             else:
-                print("Input tidak valid. Silakan coba lagi.")
+                print(f"\033[31m" + "[!]" + "\033[0m" + "Invalid input. Try again !")
 
     username_host_sistem = getpass.getuser()
     # Mendapatkan direktori kerja saat ini
@@ -311,8 +311,8 @@ def edit_cron(konfigurasi_cron):
             if edit_vars.lower() == 'y':
                 new_username = input(f"[+] Input new username (press <enter> to no changes): ")
                 new_password = input(f"""[+] Input new password (press <enter> to no changes 
-                        or 
-                    press <space> to no password)
+    or 
+press <space> to no password)
                     : """)
 
                 # Input untuk port
@@ -368,7 +368,7 @@ def edit_cron(konfigurasi_cron):
                     inputs[key] = user_input
                     break
                 else:
-                    print("Input tidak valid. Silakan coba lagi.")
+                    print(f"\033[31m" + "[!]" + "\033[0m" + "Invalid input. Try again !")
 
         perintah = input(f"[+] Input new command to be execute (press <enter> to no changes): ") or perintah_lama
         konfigurasi_cron[nomor - 1] = f"{inputs['menit']} {inputs['jam']} {inputs['hari_dari_bulan']} {inputs['bulan']} {inputs['hari_dari_minggu']} {perintah}"
