@@ -1,39 +1,20 @@
-"""
-[NOTE] :
-1. Ini adalah file development untuk 6 modul terbaru. Jika ini berhasil maka langsung di
-terapkan ke modul lainnya
-2. Modul ini versi terbarunya dapat menerima input port lebih dari 1 lalu mencobanya dengan
-input ip address dari user. Jika suatu kombinasi ip dan port berhasil login, maka skrip
-tidak akan mencoba login kembali ke ip yang sama dengan port berbeda
-3. Next coba buatkan user input counter pada bagian port input dan ip input. Jika input
-tidak sesuai format, maka skrip akan memberikan pesan error dan meminta user menginputkan ulang.
-Jika ini berhasil, cobalah untuk terapkan di modul cronjob.py
-4. Jika no 3 sudah berhasil, maka kembali ke no 1.
-5. Jika sudah melaksanakan no 4, maka perbaiki modul cronjob.py pada bagian regexp.
-Untuk mengupdate regexp search ke ip_input & port terbaru
-6. [Opsional] Jika nomor 5 berhasil. cobalah buat user input counter pada bagian cron.
-Cara kerjanya seperti nomor 3
-7. Batas akhir pengerjaan 31 januari 2024. Jika ada yang kurang/bingung maka stop development.
-Kemudian buatkan file readme untuk deskripsi mikfiles dan buat release point v1.0.0-stable
-"""
 import paramiko
 import ipaddress
 import socket
 import os
 import datetime
-import time
 import re
 
 def login_mikrotik(ip, username, password, port, login_status):
     if login_status.get(ip, False):
-        print("\033[32m" + f"[i] {ip} already logged in, skipping..." + "\033[0m")
+        print("\033[32m" + "[i]" + "\033[0m" + f" {ip} already logged in, skipping...")
         return False
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         ssh.connect(ip, port=port, username=username, password=password, timeout=3)
-        print("\033[32m" + f"[i] Successfull {ip}:{port}" + "\033[0m")
+        print("\033[32m" + "[i]" + "\033[0m" + f" Successfull login {ip}:{port}")
 
         login_status[ip] = True
 
@@ -46,15 +27,15 @@ def login_mikrotik(ip, username, password, port, login_status):
         date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
         # Define the log filename
+        global log_filename
         log_filename = f"{ip}_{date_time}"
 
         # Export the log file
-        command = f"/system backup save name={log_filename}; /export file={log_filename}"
+        command = f"""    /system backup save name={log_filename}
+    /export file={log_filename}"""
         stdin, stdout, stderr = ssh.exec_command(command)
-        print(f"[i] Execute command '{command}' di {ip}:")
-        print(stdout.read().decode())
-
-        time.sleep(5)  # wait for 5 seconds
+        print(f"[i] Execute command to " + "\033[32m" + f"{ip}:" + "\033[0m" + f"\n{command}")
+        print("\033[32m" + "[i]" + "\033[0m" + " Result from MikroTik: ", stdout.read().decode(), end='')
 
         # Buat objek SFTP
         sftp = ssh.open_sftp()
@@ -82,12 +63,11 @@ def login_mikrotik(ip, username, password, port, login_status):
         sftp.close()
         return True
     except socket.timeout:
-        print("\033[31m" + f"[!] Target {ip}:{port} none: Connection timed out." + "\033[0m")
-        print("[i] Maybe devices is off or filtered by firewall devices")
+        print("\033[31m" + "[!]" + "\033[0m" + f" Failed login to {ip}:{port}: Connection timed out.")
     except paramiko.AuthenticationException:
-        print(f"\033[31m" + "[!]" + "\033[0m" + f" Failed login to {ip}:{port} authentication failed")
+        print("\033[31m" + "[!]" + "\033[0m" + f" Failed login to {ip}:{port}: Authentication failed")
     except Exception as e:
-        print(f"\033[31m" + "[!]" + "\033[0m" + f" Failed login to {ip}:{port}: {e}")
+        print("\033[31m" + "[!]" + "\033[0m" + f" Failed login to {ip}:{port}: {e}")
         return False
     finally:
         ssh.close()
@@ -115,6 +95,7 @@ def main():
         else:
             break
 
+    print("\n[i] Attempt to login :")
     for entry in ip_entries:
         if '-' in entry:
             start_ip, end_ip = entry.split('-')
@@ -140,6 +121,8 @@ def main():
                         break
             except ipaddress.AddressValueError as ave:
                 print(f"\033[31m" + "[!]" + "\033[0m" + f" IP Address doesn't valid: {ave}")
+    print("\n\033[32m" + "[i]" + "\033[0m" + " Finish attempting to login")
+    print(f"[i] Your file format is : " + "\033[32m" + f"{log_filename}" + "\033[0m")
 
 def validate_ip(ip):
     if '-' in ip:

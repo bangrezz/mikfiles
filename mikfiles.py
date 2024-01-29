@@ -4,12 +4,11 @@ import sys
 
 
 def BackOpt():
-    print("""\n[i] Select what you want
-(1) Export/Generate Again
-(2) Back to Select Export File Menu
-(3) Back to Main Menu
-(4) Exit
-        """)
+    print("[i] Select what you want :")
+    print("\033[34m" + "(1)" + "\033[0m" + " Export/Generate Again")
+    print("\033[34m" + "(2)" + "\033[0m" + " Back to Select Export File Menu")
+    print("\033[34m" + "(3)" + "\033[0m" + " Back to Main Menu")
+    print("\033[34m" + "(4)" + "\033[0m" + " Exit")
 
 def selectionFile():
     os.system('clear')
@@ -303,8 +302,8 @@ def main():
     # select format name
     os.system('clear')
     from ui import selectFormatHostname
+    selectFormatHostname.bannerMikfiles()
     selectFormatHostname.selectFormat()
-    #global selection_format
     def selectionFormat():
         try:
             global selection_format

@@ -15,6 +15,7 @@ def cek_sistem_dan_file():
         print(f"\033[32m" + "[i]" + "\033[0m" + " Your OS is Linux/Unix")
     else:
         print(f"\033[31m" + "[!]" + "\033[0m" + " Sorry, This script only worked on Linux/Unix !")
+        sys.exit(0)
 
     # Mendeteksi file crontab
     if os.path.exists('/etc/crontab'):
@@ -92,7 +93,7 @@ def tampilkan_menu():
     print("""(1) Add   (2) Edit    (3) Delete   (4) Disable   (5) Enable    
 (b) Back    (q) Exit
           """)
-    pilihan = input("[->] Select your choice (1-5): ")
+    pilihan = input("[->] Select your choice (1-5/b/q): ")
     return pilihan
 
 class InputModules:
@@ -313,7 +314,7 @@ def edit_cron(konfigurasi_cron):
                 new_password = input(f"""[+] Input new password (press <enter> to no changes 
     or 
 press <space> to no password)
-                    : """)
+: """)
 
                 # Input untuk port
                 while True:
@@ -468,11 +469,10 @@ def jelaskan_konfigurasi_cron(konfigurasi, status):
 
 def BackOpt():
     # this function to Back or exit after execute menu of cronjob
-    print("""\n[i] Select what you want 
-(1) Back to Cron Menu
-(2) Back to Select Export File Menu
-(3) Exit
-        """)
+    print("[i] Select what you want :")
+    print("\033[34m" + "(1)" + "\033[0m" + " Back to Cron Menu")
+    print("\033[34m" + "(2)" + "\033[0m" + " Back to Select Export File Menu")
+    print("\033[34m" + "(3)" + "\033[0m" + " Exit")
     sel = input("[->] : ")
     if sel == "1":
         os.system('clear')
