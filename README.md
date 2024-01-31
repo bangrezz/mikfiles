@@ -36,7 +36,8 @@ Mikfiles can download :
 - Configuration file
 - Backup file 
 #### And support for automation download with Linux cron
-
+![Alt text](img/Screenshot_20240131_111819.png)
+This can add, edit, delete, enable, disable cron configuration. But, "add" menu only can 1 cron to add.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
@@ -77,7 +78,7 @@ End with an example of getting some data out of the system or using it for a lit
 
 ## 🎈 Usage <a name="usage"></a>
 
-How to use mikfiles to downloading file
+### How to use mikfiles to downloading file
 - if you using Linux and want to edit cron
 ```
 sudo python3 mikfiles.py
@@ -92,6 +93,10 @@ Next input username, password, port, and IP Address. You can input port and IP A
 <video src="img/Attempt%20to%20login%201.mp4" controls title="<vid>"></video>
 <video src="img/Attempt%20to%20login%202.mp4" controls title="Title"></video>
 Finally the files has been downloaded. You can export again, download other file (Example log or other), and exit.
+
+### How to use mikfiles to manage schedule download with cron
+This example to manage cron with Mikfiles :
+<video src="img/cron%20feature%20usage.mp4" controls title="Title"></video>
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 

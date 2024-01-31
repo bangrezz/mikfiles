@@ -34,7 +34,7 @@ def login_mikrotik(ip, username, password, port, login_status):
         command = f"/log print file={log_filename}"
         stdin, stdout, stderr = ssh.exec_command(command)
         print(f"[i] Execute command to " + "\033[32m" + f"{ip}:" + "\033[0m" + f"\n{command}")
-        print("\033[32m" + "[i]" + "\033[0m" + " Result from MikroTik: ", stdout.read().decode(), end='')
+        print("\033[32m" + "[i]" + "\033[0m" + " Result from MikroTik: ", stdout.read().decode(), end='',); print("\n")
 
         # Buat objek SFTP
         sftp = ssh.open_sftp()

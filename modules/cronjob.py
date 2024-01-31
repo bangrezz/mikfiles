@@ -15,7 +15,7 @@ def cek_sistem_dan_file():
         print(f"\033[32m" + "[i]" + "\033[0m" + " Your OS is Linux/Unix")
     else:
         print(f"\033[31m" + "[!]" + "\033[0m" + " Sorry, This script only worked on Linux/Unix !")
-        sys.exit(0)
+        input("[i] Press <enter> to continuous")
 
     # Mendeteksi file crontab
     if os.path.exists('/etc/crontab'):
@@ -219,7 +219,7 @@ def tambahkan_cron(konfigurasi_cron):
 
     # IP Address input
     while True:
-        ipAddr = input("[+] input IP Address (press <enter> to skip) :")
+        ipAddr = input("[+] input IP Address :")
         if not valid_ip(ipAddr):
             print(f"\033[31m" + "[!]" + "\033[0m" + " IP Address doesn't valid, try again !.")
         else:

@@ -16,9 +16,13 @@ class ExportFileDef:
 
 def hostnameDefSelection():
     os.system('clear')
+    from ui import selectFormatHostname
+    selectFormatHostname.bannerMikfiles()
     print("[->] Export with Hostname format")
 def ipAddrDefSelection():
     os.system('clear')
+    from ui import selectFormatHostname
+    selectFormatHostname.bannerMikfiles()
     print("[->] Export with IP address format")
 
 def inputPrep():
