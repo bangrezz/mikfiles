@@ -1,4 +1,5 @@
 def selectFile():
+    print("\n[i] Select 1-3 to download file :")
     print("\n\033[34m" + "(1)" + "\033[0m" + " Export log file")
     print("\033[34m" + "(2)" + "\033[0m" + " Export file configuration and backup file")
     print("\033[34m" + "(3)" + "\033[0m" + " Export both")
