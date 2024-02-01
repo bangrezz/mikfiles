@@ -219,7 +219,7 @@ def tambahkan_cron(konfigurasi_cron):
 
     # IP Address input
     while True:
-        ipAddr = input("[+] input IP Address :")
+        ipAddr = input("[+] input IP Address : ")
         if not valid_ip(ipAddr):
             print(f"\033[31m" + "[!]" + "\033[0m" + " IP Address doesn't valid, try again !.")
         else:

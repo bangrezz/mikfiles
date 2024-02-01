@@ -14,7 +14,9 @@ def login_mikrotik(ip, username, password, port, login_status):
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         ssh.connect(ip, port=port, username=username, password=password, timeout=3)
-        print("\033[32m" + "[i]" + "\033[0m" + f" Successfull login {ip}:{port}")
+        global successNotif
+        successNotif = "\033[32m" + "[i]" + "\033[0m" + f" Successfull login {ip}:{port}"
+        print(successNotif)
 
         login_status[ip] = True
 
@@ -123,7 +125,11 @@ def main():
             except ipaddress.AddressValueError as ave:
                 print(f"\033[31m" + "[!]" + "\033[0m" + f" IP Address doesn't valid: {ave}")
     print("\n\033[32m" + "[i]" + "\033[0m" + " Finish attempting to login")
-    print(f"[i] Your file format is : " + "\033[32m" + f"{log_filename}" + "\033[0m")
+    # to counter failed connect to all ip for first time mikfiles usage
+    try:
+        print(f"[i] Your file format is : " + "\033[32m" + f"{log_filename}" + "\033[0m")
+    except Exception:
+        print("\033[31m" + "[!]" + "\033[0m" + " All device can't connect")
 
 def validate_ip(ip):
     if '-' in ip:
