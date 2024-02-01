@@ -27,6 +27,7 @@
 - [Usage](#usage)
 - [Built Using](#built_using)
 - [Authors](#authors)
+- [Gallery]()
 - [Acknowledgments](#acknowledgement)
 
 ## 🧐 About <a name = "about"></a>
@@ -88,16 +89,7 @@ sudo python3 mikfiles.py
 ```
 python3 mikfiles.py
 ```
-First select format hostname, 1 or 2. Then select menu for downloading files. Example to download export file and backup file, select 2.
-<video src="img/select%20menu.mp4" controls title="Title"></video>
-Next input username, password, port, and IP Address. You can input port and IP Address more than 1 with split by ','. Default port is 22 and you can press enter if default port.
-<video src="img/Attempt%20to%20login%201.mp4" controls title="<vid>"></video>
-<video src="img/Attempt%20to%20login%202.mp4" controls title="Title"></video>
-Finally the files has been downloaded. You can export again, download other file (Example log or other), and exit.
-
-### How to use mikfiles to manage schedule download with cron
-This example to manage cron with Mikfiles :
-<video src="img/cron%20feature%20usage.mp4" controls title="Title"></video>
+Then follow all instructions on mikfiles
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
@@ -108,6 +100,9 @@ This example to manage cron with Mikfiles :
 - [@bangrezz](https://github.com/kylelobo) - Idea & Initial work
 
 See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
+
+## 🖼️ Gallery Mikfiles
+
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
