@@ -8,8 +8,9 @@
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/pulls)
+[![GitHub Issues](https://img.shields.io/github/issues/bangrezz/mikfiles)](https://github.com/bangrezz/The-Documentation-Compendium/issues)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/bangrezz/mikfiles?color=purple)
+![GitHub Release](https://img.shields.io/github/v/release/bangrezz/mikfiles?color=teal)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
 </div>
@@ -97,12 +98,21 @@ Then follow all instructions on mikfiles
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- [@bangrezz](https://github.com/kylelobo) - Idea & Initial work
-
-See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
+- [@bangrezz](https://github.com/bangrezz) - Idea & Initial work
 
 ## 🖼️ Gallery Mikfiles
-
+![Alt text](img/Screenshot_20240131_110818.png)  
+![Alt text](img/Screenshot_20240201_103310.png)
+![Alt text](img/Screenshot_20240201_103434.png)
+![Alt text](img/Screenshot_20240201_083443.png)  
+![Alt text](img/Screenshot_20240201_103620.png)
+## Automatic Download with Cron - mikfiles feature
+![Alt text](img/Screenshot_20240131_111819.png) 
+![Alt text](img/Screenshot_20240201_104154.png) 
+![Alt text](img/Screenshot_20240205_090657.png) 
+![Alt text](img/Screenshot_20240205_090848.png) 
+![Alt text](img/Screenshot_20240205_090933.png) 
+![Alt text](img/Screenshot_20240205_091053.png)
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
