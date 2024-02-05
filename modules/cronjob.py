@@ -311,14 +311,11 @@ def edit_cron(konfigurasi_cron):
             edit_vars = input(f"\033[33m" + "[?]" + "\033[0m" + " Do you want to edit this variables (y/n)? ")
             if edit_vars.lower() == 'y':
                 new_username = input(f"[+] Input new username (press <enter> to no changes): ")
-                new_password = input(f"""[+] Input new password (press <enter> to no changes 
-    or 
-press <space> to no password)
-: """)
+                new_password = input(f"[+] Input new password (press <enter> to no changes or <space> to blank password): ")
 
                 # Input untuk port
                 while True:
-                    new_port_input = input("[+] input port (1-65535) (press <enter> if default: 22) :") or '22'
+                    new_port_input = input("[+] input port (1-65535) (press <enter> to no changes): ") or '22'
                     if not valid_ports(new_port_input):
                         print(f"\033[31m" + "[!]" + "\033[0m" + " Port must be number, try again !")
                     else:
@@ -326,7 +323,7 @@ press <space> to no password)
 
                 # IP Address input
                 while True:
-                    new_ip_input = input("[+] input IP Address (press <enter> to skip) :")
+                    new_ip_input = input("[+] input IP Address (press <enter> to skip): ")
                     if new_ip_input == '':
                         break
                     elif not valid_ip(new_ip_input):
